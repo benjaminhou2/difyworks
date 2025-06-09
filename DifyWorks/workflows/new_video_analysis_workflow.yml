@@ -1,0 +1,655 @@
+app:
+  description: 🎬 工作流设计思路.md中描述的短视频分析工作流 - 全方位分析短视频的各个维度。
+  icon: 💡
+  icon_background: '#FACC15' # Yellow background for idea/design
+  mode: workflow
+  name: 设计思路分析工作流
+  use_icon_as_answer_icon: false
+kind: app
+version: 0.1.0 # Initial version
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_types:
+      - video
+      - image # As per existing workflow, might be useful for thumbnails or related images
+      enabled: true
+      number_limits: 5 # Match existing workflow
+    opening_statement: 💡 欢迎使用基于“工作流设计思路.md”文档生成的短视频分析工具！请上传您的短视频文件及相关信息。
+    retriever_resource:
+      enabled: false
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions:
+    - 这个视频的故事连贯性如何？
+    - 画面风格是否统一？
+    - 文案台词的吸引力怎么样？
+    - 视频的画质清晰吗？
+    suggested_questions_after_answer:
+      enabled: true
+    text_to_speech:
+      enabled: false
+  graph:
+    edges:
+    # Start to Basic Info Analysis
+    - data:
+        sourceType: start
+        targetType: llm
+      id: 'edge-start-basic_info'
+      source: 'node-start'
+      target: 'node-basic_info_analysis'
+      type: custom
+    # Basic Info Analysis to Parameter Extraction
+    - data:
+        sourceType: llm
+        targetType: parameter-extractor
+      id: 'edge-basic_info-param_extract'
+      source: 'node-basic_info_analysis'
+      target: 'node-parameter_extraction'
+      type: custom
+    # Parameter Extraction to Conditional Branch
+    - data:
+        sourceType: parameter-extractor
+        targetType: if-else
+      id: 'edge-param_extract-conditional'
+      source: 'node-parameter_extraction'
+      target: 'node-conditional_branch'
+      type: custom
+    # Conditional Branch to Long Video Analysis (True)
+    - data:
+        sourceType: if-else
+        targetType: llm
+      id: 'edge-conditional-long_video'
+      source: 'node-conditional_branch'
+      sourceHandle: 'true'
+      target: 'node-long_video_analysis'
+      type: custom
+    # Conditional Branch to Short Video Analysis (False)
+    - data:
+        sourceType: if-else
+        targetType: llm
+      id: 'edge-conditional-short_video'
+      source: 'node-conditional_branch'
+      sourceHandle: 'false'
+      target: 'node-short_video_analysis'
+      type: custom
+    # Long Video Analysis to Visual Style Analysis
+    - data:
+        sourceType: llm
+        targetType: llm # Placeholder, actual target might be an aggregator if parallel
+      id: 'edge-long_video-visual_style'
+      source: 'node-long_video_analysis'
+      target: 'node-visual_style_analysis' # Connect to the common professional analysis nodes
+      type: custom
+    # Short Video Analysis to Visual Style Analysis
+    - data:
+        sourceType: llm
+        targetType: llm # Placeholder
+      id: 'edge-short_video-visual_style'
+      source: 'node-short_video_analysis'
+      target: 'node-visual_style_analysis' # Connect to the common professional analysis nodes
+      type: custom
+    # Visual Style Analysis to Copywriting Analysis
+    - data:
+        sourceType: llm
+        targetType: llm
+      id: 'edge-visual_style-copywriting'
+      source: 'node-visual_style_analysis'
+      target: 'node-copywriting_analysis'
+      type: custom
+    # Copywriting Analysis to Technical Production Analysis
+    - data:
+        sourceType: llm
+        targetType: llm
+      id: 'edge-copywriting-technical'
+      source: 'node-copywriting_analysis'
+      target: 'node-technical_production_analysis'
+      type: custom
+    # Technical Production Analysis to Variable Aggregation
+    - data:
+        sourceType: llm
+        targetType: variable-aggregator
+      id: 'edge-technical-aggregator'
+      source: 'node-technical_production_analysis'
+      target: 'node-variable_aggregator'
+      type: custom
+    # Variable Aggregation to Comprehensive Evaluation
+    - data:
+        sourceType: variable-aggregator
+        targetType: llm
+      id: 'edge-aggregator-comprehensive_eval'
+      source: 'node-variable_aggregator'
+      target: 'node-comprehensive_evaluation'
+      type: custom
+    # Comprehensive Evaluation to Template Transformation
+    - data:
+        sourceType: llm
+        targetType: template-transform
+      id: 'edge-comprehensive_eval-template'
+      source: 'node-comprehensive_evaluation'
+      target: 'node-template_transform'
+      type: custom
+    # Template Transformation to End
+    - data:
+        sourceType: template-transform
+        targetType: end
+      id: 'edge-template-end'
+      source: 'node-template_transform'
+      target: 'node-end'
+      type: custom
+
+  nodes:
+  # Start Node
+  - data:
+      desc: 接收用户上传的短视频文件和分析需求 (来自设计文档)
+      selected: false
+      title: 开始节点
+      type: start
+      variables:
+      - description: 请上传需要分析的短视频文件 (支持多文件)
+        label: 视频文件
+        max_length: 48 # Default, adjust if needed
+        options: []
+        required: true
+        type: file-list # video_files from design
+        variable: input_video_files
+      - description: 请选择视频的常见类型，以便进行针对性分析
+        label: 视频类型
+        max_length: 48
+        options: # From design doc
+        - 剧情类
+        - 教育类
+        - 产品展示
+        - 娱乐搞笑
+        - 知识科普
+        - 生活记录
+        - 商业广告
+        - 其他
+        required: true
+        type: select # video_type from design
+        variable: input_video_type
+      - description: 请描述您的个性化分析重点或特定需求
+        label: 自定义分析需求
+        max_length: 500 # Default, adjust if needed
+        options: []
+        required: false
+        type: paragraph # analysis_requirements from design
+        variable: input_analysis_requirements
+    id: 'node-start'
+    type: custom
+
+  # Basic Information Analysis Node (LLM)
+  - data:
+      context:
+        enabled: false
+      desc: 对视频进行初步分析，提取基本信息和技术参数 (来自设计文档)
+      model:
+        completion_params:
+          temperature: 0.3 # As per existing workflow for initial analysis
+        mode: chat
+        name: gpt-4o # As specified in design
+        provider: openai
+      prompt_template:
+      - id: basic-info-system
+        role: system
+        text: |
+          你是一名专业的视频内容分析师，具有丰富的短视频制作和评估经验。请对上传的视频进行初步分析。
+
+          分析任务 (来自设计文档):
+          1. 提取视频技术参数（时长、分辨率、格式）。
+          2. 概述视频的主要内容和主题。
+          3. 初步质量评估。
+
+          请用专业、客观的语言进行分析，为后续详细分析提供基础信息。
+      - id: basic-info-user
+        role: user
+        text: |
+          请分析以下视频文件：
+
+          视频文件：{{#node-start.input_video_files#}}
+          视频类型：{{#node-start.input_video_type#}}
+          用户需求：{{#node-start.input_analysis_requirements#}}
+
+          请提供详细的基本信息分析。
+      selected: false
+      title: 基本信息分析节点
+      type: llm
+      vision:
+        enabled: true # As specified in design
+    id: 'node-basic_info_analysis'
+    type: custom
+
+  # Parameter Extraction Node
+  - data:
+      desc: 从基本信息分析结果中提取结构化参数 (来自设计文档)
+      instruction: 根据前一个节点的分析结果，提取以下视频参数。
+      parameters: # From design doc
+      - description: 视频时长（单位：秒）
+        form: llm
+        name: duration
+        required: true
+        type: number
+      - description: 视频分辨率 (例如 1920x1080)
+        form: llm
+        name: resolution
+        required: true
+        type: string
+      - description: 视频识别出的主题或类型
+        form: llm
+        name: theme_type
+        required: true
+        type: string
+      - description: 视频中是否有人物出镜 (true/false)
+        form: llm
+        name: has_person
+        required: true # Design implies these are important
+        type: boolean
+      - description: 视频中是否包含屏幕文字或字幕 (true/false)
+        form: llm
+        name: has_text
+        required: true # Design implies these are important
+        type: boolean
+      - description: 视频中背景音乐的风格或类型 (可选)
+        form: llm
+        name: music_type
+        required: false # Marked as optional in existing workflow and reasonable
+        type: string
+      query: '{{#node-basic_info_analysis.text#}}' # Use output from basic info node
+      selected: false
+      title: 参数提取节点
+      type: parameter-extractor
+    id: 'node-parameter_extraction'
+    type: custom
+
+  # Conditional Branch Node
+  - data:
+      cases: # From design doc: duration >= 30s
+      - case_id: 'true' # Path for long videos
+        conditions:
+        - comparison_operator: '≥'
+          value: '30'
+          variable_selector:
+          - 'node-parameter_extraction' # Referencing the parameter extractor node
+          - duration # The 'duration' variable from that node
+        logical_operator: and
+      desc: 根据视频时长 (≥30秒为长视频) 选择不同分析策略 (来自设计文档)
+      selected: false
+      title: 条件分支节点 (时长判断)
+      type: if-else
+    id: 'node-conditional_branch'
+    type: custom
+
+  # Long Video Content Analysis Node (LLM) - True Path
+  - data:
+      context:
+        enabled: false
+      desc: 针对时长≥30秒的视频进行深度内容分析 (来自设计文档)
+      model:
+        completion_params:
+          temperature: 0.2 # As in existing workflow for content analysis
+        mode: chat
+        name: gpt-4o
+        provider: openai
+      prompt_template:
+      - id: long-video-system
+        role: system
+        text: |
+          你是一名资深的视频内容分析专家，专门分析较长视频的内容结构和叙事逻辑。
+
+          分析维度 (来自设计文档 - 长视频部分):
+          1. **故事连贯性**：情节逻辑、转折设置、主线副线关系。
+          2. **受众匹配度**：目标群体适配性、情感共鸣点。
+             (Assuming this is for longer content, short might focus on hook)
+
+          请提供专业、详细的分析报告。
+      - id: long-video-user
+        role: user
+        text: |
+          视频基本信息：{{#node-basic_info_analysis.text#}}
+          提取的参数：
+          - 时长：{{#node-parameter_extraction.duration#}}秒
+          - 分辨率：{{#node-parameter_extraction.resolution#}}
+          - 主题：{{#node-parameter_extraction.theme_type#}}
+
+          这是一个时长≥30秒的视频，请进行深度内容分析。
+      selected: false
+      title: 长视频内容分析 (≥30s)
+      type: llm
+      vision:
+        enabled: true
+    id: 'node-long_video_analysis'
+    type: custom
+
+  # Short Video Content Analysis Node (LLM) - False Path
+  - data:
+      context:
+        enabled: false
+      desc: 针对时长<30秒的视频进行快节奏内容分析 (来自设计文档)
+      model:
+        completion_params:
+          temperature: 0.2 # Consistent temperature for content
+        mode: chat
+        name: gpt-4o
+        provider: openai
+      prompt_template:
+      - id: short-video-system
+        role: system
+        text: |
+          你是一名短视频内容分析专家，精通快节奏内容的评估和优化。
+
+          分析维度 (来自设计文档 - 短视频部分):
+          1. **故事连贯性**：注重快节奏、开头吸引力。
+          2. **受众匹配度**：快速建立情感连接。
+             (Assuming this is for shorter content)
+
+          请提供专业、详细的分析报告，重点关注短视频的特性。
+      - id: short-video-user
+        role: user
+        text: |
+          视频基本信息：{{#node-basic_info_analysis.text#}}
+          提取的参数：
+          - 时长：{{#node-parameter_extraction.duration#}}秒
+          - 分辨率：{{#node-parameter_extraction.resolution#}}
+          - 主题：{{#node-parameter_extraction.theme_type#}}
+
+          这是一个时长<30秒的视频，请进行快节奏内容分析。
+      selected: false
+      title: 短视频内容分析 (<30s)
+      type: llm
+      vision:
+        enabled: true
+    id: 'node-short_video_analysis'
+    type: custom
+
+  # Professional Analysis Node - Visual Style (Common for both branches)
+  - data:
+      context:
+        enabled: false
+      desc: 分析视频的画面风格统一性、色彩、构图和画质 (来自设计文档 - 视觉层面)
+      model:
+        completion_params:
+          temperature: 0.1 # Technical analysis, lower temperature
+        mode: chat
+        name: gpt-4o
+        provider: openai
+      prompt_template:
+      - id: visual-style-system
+        role: system
+        text: |
+          你是一名专业的视觉设计师和分析师。
+
+          分析维度 (来自设计文档 - 视觉层面):
+          1. **画面风格统一性**：色彩搭配、构图质量、视觉一致性。
+          2. **画质清晰度**：分辨率、噪点控制、压缩质量。
+
+          请提供专业的视觉分析报告。
+      - id: visual-style-user
+        role: user
+        text: |
+          视频基本信息：{{#node-basic_info_analysis.text#}}
+          提取的参数：
+          - 分辨率：{{#node-parameter_extraction.resolution#}}
+
+          内容分析 (长视频路径，如果适用): {{#node-long_video_analysis.text#}}
+          内容分析 (短视频路径，如果适用): {{#node-short_video_analysis.text#}}
+
+          请对该视频的视觉层面进行分析。
+      selected: false
+      title: 专业分析 - 视觉层面
+      type: llm
+      vision:
+        enabled: true
+    id: 'node-visual_style_analysis'
+    type: custom
+
+  # Professional Analysis Node - Copywriting and Dialogue (Common)
+  - data:
+      context:
+        enabled: false
+      desc: 分析视频的文案台词吸引力、语言表达和音频质量 (来自设计文档 - 文案层面)
+      model:
+        completion_params:
+          temperature: 0.3 # Creative evaluation, slightly higher temp
+        mode: chat
+        name: gpt-4o
+        provider: openai
+      prompt_template:
+      - id: copywriting-system
+        role: system
+        text: |
+          你是一名资深的文案策划师和音频分析专家。
+
+          分析维度 (来自设计文档 - 文案层面):
+          1. **台词吸引力**：语言表达力、开头Hook设计、行动召唤。
+          2. **音频质量**：语音清晰度、背景音乐匹配度。
+
+          请提供专业的文案与音频分析报告。
+      - id: copywriting-user
+        role: user
+        text: |
+          视频基本信息：{{#node-basic_info_analysis.text#}}
+          提取的参数：
+          - 是否包含文字：{{#node-parameter_extraction.has_text#}}
+          - 背景音乐类型：{{#node-parameter_extraction.music_type#}}
+
+          视觉分析结果： {{#node-visual_style_analysis.text#}}
+
+          请对该视频的文案层面进行分析。
+      selected: false
+      title: 专业分析 - 文案层面
+      type: llm
+      vision:
+        enabled: true # May need to see text on screen
+    id: 'node-copywriting_analysis'
+    type: custom
+
+  # Professional Analysis Node - Technical Production (Common)
+  - data:
+      context:
+        enabled: false
+      desc: 分析视频的制作工艺、剪辑技术和平台适配性 (来自设计文档 - 技术层面)
+      model:
+        completion_params:
+          temperature: 0.1 # Technical, objective
+        mode: chat
+        name: gpt-4o
+        provider: openai
+      prompt_template:
+      - id: technical-production-system
+        role: system
+        text: |
+          你是一名视频技术专家和后期制作分析师。
+
+          分析维度 (来自设计文档 - 技术层面):
+          1. **制作工艺**：剪辑技术、特效使用、音频处理。
+          2. **平台适配**：格式规范、移动端优化。
+
+          请提供专业的技术制作分析报告。
+      - id: technical-production-user
+        role: user
+        text: |
+          视频基本信息：{{#node-basic_info_analysis.text#}}
+          提取的参数：
+          - 时长：{{#node-parameter_extraction.duration#}}秒
+          - 分辨率：{{#node-parameter_extraction.resolution#}}
+
+          文案分析结果： {{#node-copywriting_analysis.text#}}
+
+          请对该视频的技术层面进行分析。
+      selected: false
+      title: 专业分析 - 技术层面
+      type: llm
+      vision:
+        enabled: true # To see compression artifacts, etc.
+    id: 'node-technical_production_analysis'
+    type: custom
+
+  # Variable Aggregation Node
+  - data:
+      desc: 整合来自不同分析路径和专业分析节点的结构化数据 (来自设计文档)
+      selected: false
+      title: 变量聚合节点
+      type: variable-aggregator
+      variables: # Based on design doc's aggregation strategy
+      - value_selector: # Output from basic info
+        - 'node-basic_info_analysis'
+        - text
+        variable: aggregated_basic_info
+      - value_selector: # Output from parameter extraction
+        - 'node-parameter_extraction'
+        - duration # Example, could aggregate all params if needed as a JSON string
+        variable: aggregated_duration
+      - value_selector: # Output from parameter extraction
+        - 'node-parameter_extraction'
+        - resolution
+        variable: aggregated_resolution
+      - value_selector: # Output from parameter extraction
+        - 'node-parameter_extraction'
+        - theme_type
+        variable: aggregated_theme_type
+      - value_selector: # Output of long video analysis (if path taken)
+        - 'node-long_video_analysis'
+        - text
+        variable: aggregated_long_video_analysis_text # Renamed for clarity
+      - value_selector: # Output of short video analysis (if path taken)
+        - 'node-short_video_analysis'
+        - text
+        variable: aggregated_short_video_analysis_text # Renamed for clarity
+      - value_selector: # Output of visual style analysis
+        - 'node-visual_style_analysis'
+        - text
+        variable: aggregated_visual_analysis_text
+      - value_selector: # Output of copywriting analysis
+        - 'node-copywriting_analysis'
+        - text
+        variable: aggregated_script_analysis_text
+      - value_selector: # Output of technical production analysis
+        - 'node-technical_production_analysis'
+        - text
+        variable: aggregated_technical_analysis_text
+    id: 'node-variable_aggregator'
+    type: custom
+
+  # Comprehensive Evaluation Node (LLM)
+  - data:
+      context:
+        enabled: false
+      desc: 基于所有分析结果，由“总监级”角色生成综合评估、五维评分和改进建议 (来自设计文档)
+      model:
+        completion_params:
+          temperature: 0.2 # Balanced for summary and suggestions
+        mode: chat
+        name: gpt-4o
+        provider: openai
+      prompt_template:
+      - id: comprehensive-eval-system
+        role: system
+        text: |
+          你是一名顶级的短视频制作总监和内容策略专家。你的任务是基于各专业团队的分析报告，生成最终的综合评估。
+
+          评估要求 (来自设计文档):
+          1. **五维度评分系统 (100分制)**:
+             - 故事连贯性
+             - 画面风格统一性
+             - 文案台词吸引力
+             - 画质清晰度
+             - 技术制作水平 (This one combines '制作工艺' and '平台适配' from earlier)
+          2. **优先级改进建议 (三级)**: 紧急 / 重要 / 长期。
+          3. **具体执行方案**。
+          4. **成功案例参考** (可选，如果适用)。
+
+          请确保输出是结构化的，包含明确的评分和可操作的建议。
+      - id: comprehensive-eval-user
+        role: user
+        text: |
+          请基于以下专业分析报告和数据，生成综合评估报告：
+
+          **原始输入:**
+          - 视频类型：{{#node-start.input_video_type#}}
+          - 用户需求：{{#node-start.input_analysis_requirements#}}
+
+          **基础分析与参数:**
+          - 基本信息分析: {{#node-variable_aggregator.aggregated_basic_info#}}
+          - 时长: {{#node-variable_aggregator.aggregated_duration#}} 秒
+          - 分辨率: {{#node-variable_aggregator.aggregated_resolution#}}
+          - 主题: {{#node-variable_aggregator.aggregated_theme_type#}}
+
+          **内容分析 (根据时长选择):**
+          {{#node-variable_aggregator.aggregated_long_video_analysis_text#}}
+          {{#node-variable_aggregator.aggregated_short_video_analysis_text#}}
+
+          **各专业维度分析:**
+          - 视觉层面分析: {{#node-variable_aggregator.aggregated_visual_analysis_text#}}
+          - 文案层面分析: {{#node-variable_aggregator.aggregated_script_analysis_text#}}
+          - 技术层面分析: {{#node-variable_aggregator.aggregated_technical_analysis_text#}}
+
+          请生成包含五维度评分、三级改进建议、具体执行方案的最终报告。
+      selected: false
+      title: 综合评估节点 (总监级)
+      type: llm
+    id: 'node-comprehensive_evaluation'
+    type: custom
+
+  # Template Transformation Node
+  - data:
+      desc: 将综合评估结果格式化为Markdown专业报告 (来自设计文档)
+      selected: false
+      template: |
+        # 🎬 短视频专业分析评估报告 (基于设计思路)
+
+        ## 📌 视频基本信息
+        - **上传类型:** {{#node-start.input_video_type#}}
+        - **用户特别需求:** {{#node-start.input_analysis_requirements#}}
+        - **分析时间:** {{ 'now' | date: '%Y-%m-%d %H:%M' }}
+
+        ---
+        ## 📊 综合评估与建议 (总监视角)
+
+        {{#node-comprehensive_evaluation.text#}}
+
+        ---
+        ## 🔬 各维度详细分析摘要
+
+        ### 基础信息与参数
+        {{#node-variable_aggregator.aggregated_basic_info#}}
+        - **提取时长:** {{#node-variable_aggregator.aggregated_duration#}} 秒
+        - **提取分辨率:** {{#node-variable_aggregator.aggregated_resolution#}}
+        - **提取主题:** {{#node-variable_aggregator.aggregated_theme_type#}}
+
+        ### 内容层面 (根据视频时长判断)
+        {{#node-variable_aggregator.aggregated_long_video_analysis_text#}}
+        {{#node-variable_aggregator.aggregated_short_video_analysis_text#}}
+
+        ### 视觉层面
+        {{#node-variable_aggregator.aggregated_visual_analysis_text#}}
+
+        ### 文案层面
+        {{#node-variable_aggregator.aggregated_script_analysis_text#}}
+
+        ### 技术层面
+        {{#node-variable_aggregator.aggregated_technical_analysis_text#}}
+
+        ---
+        **报告生成工具:** DifyWorks - 设计思路分析工作流 v0.1.0
+      title: 模板转换节点 (Markdown报告)
+      type: template-transform
+    id: 'node-template_transform'
+    type: custom
+
+  # End Node
+  - data:
+      desc: 输出最终的Markdown格式专业分析报告
+      outputs:
+      - value_selector:
+        - 'node-template_transform' # From template node
+        - output # Default output variable for template transform
+        variable: final_analysis_report
+      selected: false
+      title: 输出结果节点
+      type: end
+    id: 'node-end'
+    type: custom
