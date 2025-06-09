@@ -1,0 +1,736 @@
+app:
+  description: 🎬 专业短视频内容分析评估工具 - 全方位分析短视频的故事连贯性、画面风格、文案吸引力、画质清晰度等关键指标
+  icon: 🎬
+  icon_background: '#667085'
+  mode: workflow
+  name: 短视频内容分析评估工作流
+  use_icon_as_answer_icon: false
+kind: app
+version: 0.1.3
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_types:
+      - video
+      - image
+      enabled: true
+      number_limits: 5
+    opening_statement: 🎬 欢迎使用专业短视频分析工具！请上传您的短视频文件，我将从故事连贯性、画面风格、文案吸引力、画质清晰度等多个维度为您提供专业分析。
+    retriever_resource:
+      enabled: false
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: 
+    - 这个视频的画面风格是否统一？
+    - 台词内容的吸引力如何？
+    - 视频画质是否清晰？
+    - 故事情节是否连贯？
+    suggested_questions_after_answer:
+      enabled: true
+    text_to_speech:
+      enabled: false
+  graph:
+    edges:
+    - data:
+        sourceType: start
+        targetType: llm
+      id: '1736412001000-1736412001001'
+      source: '1736412001000'
+      target: '1736412001001'
+      type: custom
+    - data:
+        sourceType: llm
+        targetType: parameter-extractor
+      id: '1736412001001-1736412001002'
+      source: '1736412001001'
+      target: '1736412001002'
+      type: custom
+    - data:
+        sourceType: parameter-extractor
+        targetType: if-else
+      id: '1736412001002-1736412001003'
+      source: '1736412001002'
+      target: '1736412001003'
+      type: custom
+    - data:
+        sourceType: if-else
+        targetType: llm
+      id: '1736412001003-1736412001004'
+      source: '1736412001003'
+      sourceHandle: 'true'
+      target: '1736412001004'
+      type: custom
+    - data:
+        sourceType: if-else
+        targetType: llm
+      id: '1736412001003-1736412001005'
+      source: '1736412001003'
+      sourceHandle: 'false'
+      target: '1736412001005'
+      type: custom
+    - data:
+        sourceType: llm
+        targetType: llm
+      id: '1736412001004-1736412001006'
+      source: '1736412001004'
+      target: '1736412001006'
+      type: custom
+    - data:
+        sourceType: llm
+        targetType: llm
+      id: '1736412001005-1736412001006'
+      source: '1736412001005'
+      target: '1736412001006'
+      type: custom
+    - data:
+        sourceType: llm
+        targetType: llm
+      id: '1736412001006-1736412001007'
+      source: '1736412001006'
+      target: '1736412001007'
+      type: custom
+    - data:
+        sourceType: llm
+        targetType: llm
+      id: '1736412001007-1736412001008'
+      source: '1736412001007'
+      target: '1736412001008'
+      type: custom
+    - data:
+        sourceType: llm
+        targetType: variable-aggregator
+      id: '1736412001008-1736412001009'
+      source: '1736412001008'
+      target: '1736412001009'
+      type: custom
+    - data:
+        sourceType: variable-aggregator
+        targetType: llm
+      id: '1736412001009-1736412001010'
+      source: '1736412001009'
+      target: '1736412001010'
+      type: custom
+    - data:
+        sourceType: llm
+        targetType: template-transform
+      id: '1736412001010-1736412001011'
+      source: '1736412001010'
+      target: '1736412001011'
+      type: custom
+    - data:
+        sourceType: template-transform
+        targetType: end
+      id: '1736412001011-1736412001012'
+      source: '1736412001011'
+      target: '1736412001012'
+      type: custom
+  nodes:
+  - data:
+      desc: 接收用户上传的短视频文件和分析需求
+      selected: false
+      title: 开始
+      type: start
+      variables:
+      - description: 请上传需要分析的短视频文件
+        label: 视频文件
+        max_length: 48
+        options: []
+        required: true
+        type: file-list
+        variable: video_files
+      - description: 请描述您的具体分析需求或关注重点
+        label: 分析需求
+        max_length: 500
+        options: []
+        required: false
+        type: paragraph
+        variable: analysis_requirements
+      - description: 选择视频类型以进行针对性分析
+        label: 视频类型
+        max_length: 48
+        options:
+        - 剧情类
+        - 教育类
+        - 产品展示
+        - 娱乐搞笑
+        - 知识科普
+        - 生活记录
+        - 商业广告
+        - 其他
+        required: true
+        type: select
+        variable: video_type
+    id: '1736412001000'
+    type: custom
+  - data:
+      context:
+        enabled: false
+      desc: 初步分析视频基本信息和技术参数
+      model:
+        completion_params:
+          temperature: 0.3
+        mode: chat
+        name: gpt-4o
+        provider: openai
+      prompt_template:
+      - id: basic-system
+        role: system
+        text: |
+          你是一名专业的视频内容分析师，具有丰富的短视频制作和评估经验。请对上传的视频进行初步分析，提取基本信息。
+
+          分析要求：
+          1. 描述视频的基本信息（时长、尺寸、格式等）
+          2. 概述视频的主要内容和主题
+          3. 识别视频类型和风格
+          4. 评估视频的技术质量（分辨率、帧率、压缩质量）
+          5. 检查是否有明显的技术问题
+
+          请用专业、客观的语言进行分析，为后续详细分析提供基础信息。
+      - id: basic-user
+        role: user
+        text: |
+          请分析以下视频文件：
+
+          视频文件：{{#1736412001000.video_files#}}
+          视频类型：{{#1736412001000.video_type#}}
+          用户需求：{{#1736412001000.analysis_requirements#}}
+
+          请提供详细的基本信息分析。
+      selected: false
+      title: 视频基本信息分析
+      type: llm
+      vision:
+        enabled: true
+    id: '1736412001001'
+    type: custom
+  - data:
+      desc: 提取视频的关键参数用于后续分析
+      instruction: 从视频基本分析中提取关键参数，用于后续的专业分析流程
+      parameters:
+      - description: 视频时长（秒）
+        form: llm
+        name: duration
+        required: true
+        type: number
+      - description: 视频分辨率
+        form: llm
+        name: resolution
+        required: true
+        type: string
+      - description: 视频主题类型
+        form: llm
+        name: theme_type
+        required: true
+        type: string
+      - description: 是否包含人物出镜
+        form: llm
+        name: has_person
+        required: true
+        type: boolean
+      - description: 是否包含字幕或文字
+        form: llm
+        name: has_text
+        required: true
+        type: boolean
+      - description: 背景音乐类型
+        form: llm
+        name: music_type
+        required: false
+        type: string
+      query: '{{#1736412001001.text#}}'
+      selected: false
+      title: 参数提取
+      type: parameter-extractor
+    id: '1736412001002'
+    type: custom
+  - data:
+      cases:
+      - case_id: 'true'
+        conditions:
+        - comparison_operator: '≥'
+          value: '30'
+          variable_selector:
+          - '1736412001002'
+          - duration
+        logical_operator: and
+      desc: 根据视频时长选择不同的分析策略
+      selected: false
+      title: 时长判断
+      type: if-else
+    id: '1736412001003'
+    type: custom
+  - data:
+      context:
+        enabled: false
+      desc: 针对长视频的深度内容分析
+      model:
+        completion_params:
+          temperature: 0.2
+        mode: chat
+        name: gpt-4o
+        provider: openai
+      prompt_template:
+      - id: long-content-system
+        role: system
+        text: |
+          你是一名资深的视频内容分析专家，专门分析较长视频的内容结构和叙事逻辑。
+
+          分析维度：
+          1. **故事连贯性分析**
+             - 情节发展逻辑
+             - 转折点设置
+             - 开头结尾呼应
+             - 主线副线关系
+
+          2. **内容深度评估**
+             - 信息密度
+             - 观点清晰度
+             - 论证完整性
+             - 教育价值
+
+          3. **节奏把控**
+             - 段落划分合理性
+             - 高潮设置
+             - 信息传递节奏
+             - 观众注意力管理
+
+          请提供专业、详细的分析报告。
+      - id: long-content-user
+        role: user
+        text: |
+          视频基本信息：{{#1736412001001.text#}}
+
+          提取的参数：
+          - 时长：{{#1736412001002.duration#}}秒
+          - 分辨率：{{#1736412001002.resolution#}}
+          - 主题：{{#1736412001002.theme_type#}}
+          - 包含人物：{{#1736412001002.has_person#}}
+          - 包含文字：{{#1736412001002.has_text#}}
+
+          请对这个较长视频进行深度内容分析。
+      selected: false
+      title: 长视频内容分析
+      type: llm
+      vision:
+        enabled: true
+    id: '1736412001004'
+    type: custom
+  - data:
+      context:
+        enabled: false
+      desc: 针对短视频的快节奏分析
+      model:
+        completion_params:
+          temperature: 0.2
+        mode: chat
+        name: gpt-4o
+        provider: openai
+      prompt_template:
+      - id: short-content-system
+        role: system
+        text: |
+          你是一名短视频内容分析专家，精通快节奏内容的评估和优化。
+
+          短视频特殊分析维度：
+          1. **开头吸引力**
+             - 前3秒抓住力
+             - 视觉冲击效果
+             - 悬念设置
+             - 话题切入
+
+          2. **信息传递效率**
+             - 核心信息突出度
+             - 冗余内容识别
+             - 视觉元素配合
+             - 节奏紧凑性
+
+          3. **完播率优化**
+             - 内容密度适中
+             - 转折点设置
+             - 结尾引导
+             - 情感共鸣点
+
+          4. **平台适配性**
+             - 竖屏优化
+             - 字幕清晰度
+             - 音量平衡
+             - 移动端体验
+
+          请提供针对性的短视频优化建议。
+      - id: short-content-user
+        role: user
+        text: |
+          视频基本信息：{{#1736412001001.text#}}
+
+          提取的参数：
+          - 时长：{{#1736412001002.duration#}}秒
+          - 分辨率：{{#1736412001002.resolution#}}
+          - 主题：{{#1736412001002.theme_type#}}
+          - 包含人物：{{#1736412001002.has_person#}}
+          - 包含文字：{{#1736412001002.has_text#}}
+
+          请对这个短视频进行专业分析，重点关注快节奏内容的特殊要求。
+      selected: false
+      title: 短视频内容分析
+      type: llm
+      vision:
+        enabled: true
+    id: '1736412001005'
+    type: custom
+  - data:
+      context:
+        enabled: false
+      desc: 专业视觉风格和画面质量分析
+      model:
+        completion_params:
+          temperature: 0.1
+        mode: chat
+        name: gpt-4o
+        provider: openai
+      prompt_template:
+      - id: visual-system
+        role: system
+        text: |
+          你是一名专业的视觉设计和摄影分析师，专门评估视频的视觉质量和风格统一性。
+
+          视觉分析维度：
+          1. **画面构图分析**
+             - 构图规则运用（黄金比例、三分法等）
+             - 主体突出度
+             - 景深效果
+             - 视觉平衡
+
+          2. **色彩风格评估**
+             - 色调统一性
+             - 色彩搭配协调性
+             - 饱和度控制
+             - 色彩情感表达
+
+          3. **画质技术评估**
+             - 清晰度评分
+             - 噪点控制
+             - 曝光准确性
+             - 色彩还原度
+
+          4. **风格一致性**
+             - 滤镜使用统一性
+             - 镜头语言一致性
+             - 视觉元素呼应
+             - 品牌视觉识别
+
+          请提供专业的视觉质量评估报告，包含具体的改进建议。
+      - id: visual-user
+        role: user
+        text: |
+          基于以下视频信息进行视觉分析：
+
+          基本信息：{{#1736412001001.text#}}
+
+          视频参数：
+          - 分辨率：{{#1736412001002.resolution#}}
+          - 主题类型：{{#1736412001002.theme_type#}}
+          - 人物出镜：{{#1736412001002.has_person#}}
+
+          请重点分析画面风格统一性、色彩搭配、构图质量和整体视觉效果。
+      selected: false
+      title: 视觉风格分析
+      type: llm
+      vision:
+        enabled: true
+    id: '1736412001006'
+    type: custom
+  - data:
+      context:
+        enabled: false
+      desc: 文案台词和音频内容专业分析
+      model:
+        completion_params:
+          temperature: 0.2
+        mode: chat
+        name: gpt-4o
+        provider: openai
+      prompt_template:
+      - id: script-system
+        role: system
+        text: |
+          你是一名资深的文案策划和语言表达专家，专门分析视频中的文字和音频内容。
+
+          文案音频分析维度：
+          1. **文案吸引力评估**
+             - 开头hook设计
+             - 语言表达力度
+             - 情感共鸣点
+             - 行动召唤效果
+
+          2. **台词质量分析**
+             - 语言流畅度
+             - 逻辑清晰度
+             - 表达准确性
+             - 口语化程度
+
+          3. **字幕优化建议**
+             - 字幕同步性
+             - 字体可读性
+             - 关键信息突出
+             - 视觉干扰度
+
+          4. **音频质量评估**
+             - 语音清晰度
+             - 背景音乐匹配度
+             - 音量平衡
+             - 音效使用恰当性
+
+          5. **语言表达策略**
+             - 目标受众匹配
+             - 语言风格统一
+             - 专业术语使用
+             - 情感传递效果
+
+          请提供专业的文案和音频优化建议。
+      - id: script-user
+        role: user
+        text: |
+          基于以下信息分析文案台词：
+
+          视频类型：{{#1736412001000.video_type#}}
+          基本信息：{{#1736412001001.text#}}
+
+          视频参数：
+          - 包含文字：{{#1736412001002.has_text#}}
+          - 背景音乐：{{#1736412001002.music_type#}}
+          - 主题类型：{{#1736412001002.theme_type#}}
+
+          请重点分析台词吸引力、语言表达效果和音频质量。
+      selected: false
+      title: 文案台词分析
+      type: llm
+      vision:
+        enabled: true
+    id: '1736412001007'
+    type: custom
+  - data:
+      context:
+        enabled: false
+      desc: 技术层面和制作工艺分析
+      model:
+        completion_params:
+          temperature: 0.1
+        mode: chat
+        name: gpt-4o
+        provider: openai
+      prompt_template:
+      - id: technical-system
+        role: system
+        text: |
+          你是一名专业的视频后期制作和技术分析专家，专门评估视频的技术质量和制作工艺。
+
+          技术分析维度：
+          1. **剪辑技术评估**
+             - 切换节奏合理性
+             - 转场效果恰当性
+             - 镜头衔接流畅度
+             - 剪辑逻辑清晰度
+
+          2. **画质技术评估**
+             - 分辨率清晰度评分
+             - 压缩质量评估
+             - 噪点控制水平
+             - 色彩还原准确度
+
+          3. **音频后期处理**
+             - 音频同步精度
+             - 音效层次设计
+             - 混音质量
+             - 降噪处理效果
+
+          4. **技术规范性**
+             - 格式标准化
+             - 压缩参数优化
+             - 平台适配性
+             - 兼容性考虑
+
+          5. **制作工艺水平**
+             - 整体制作精度
+             - 细节处理完善度
+             - 专业化程度
+             - 创新技术应用
+
+          请提供专业的技术评估和改进建议。
+      - id: technical-user
+        role: user
+        text: |
+          基于以下技术信息进行分析：
+
+          基本技术参数：{{#1736412001001.text#}}
+
+          视频规格：
+          - 时长：{{#1736412001002.duration#}}秒
+          - 分辨率：{{#1736412001002.resolution#}}
+          - 音乐类型：{{#1736412001002.music_type#}}
+
+          请重点分析画质清晰度、剪辑技术、音频处理和整体制作工艺水平。
+      selected: false
+      title: 技术制作分析
+      type: llm
+      vision:
+        enabled: true
+    id: '1736412001008'
+    type: custom
+  - data:
+      desc: 整合所有分析结果
+      selected: false
+      title: 结果聚合
+      type: variable-aggregator
+      variables:
+      - value_selector:
+        - '1736412001004'
+        - text
+        variable: long_video_analysis
+      - value_selector:
+        - '1736412001005'
+        - text
+        variable: short_video_analysis
+      - value_selector:
+        - '1736412001006'
+        - text
+        variable: visual_analysis
+      - value_selector:
+        - '1736412001007'
+        - text
+        variable: script_analysis
+      - value_selector:
+        - '1736412001008'
+        - text
+        variable: technical_analysis
+    id: '1736412001009'
+    type: custom
+  - data:
+      context:
+        enabled: false
+      desc: 生成综合评估报告和优化建议
+      model:
+        completion_params:
+          temperature: 0.2
+        mode: chat
+        name: gpt-4o
+        provider: openai
+      prompt_template:
+      - id: final-system
+        role: system
+        text: |
+          你是一名顶级的短视频制作总监和内容策略专家，需要基于各专业团队的分析报告，生成最终的综合评估和优化建议。
+
+          综合评估要求：
+          1. **整体评分系统**
+             - 故事连贯性：满分100分
+             - 画面风格统一性：满分100分
+             - 文案台词吸引力：满分100分
+             - 画质清晰度：满分100分
+             - 技术制作水平：满分100分
+             - 综合得分：五项平均
+
+          2. **优先级改进建议**
+             - 🚨 紧急需要改进（影响观看体验）
+             - ⭐ 重要优化项目（提升质量效果）
+             - 🎯 长期提升方向（战略性改进）
+
+          3. **具体执行方案**
+             - 技术层面改进步骤
+             - 内容优化具体措施
+             - 视觉效果提升建议
+
+          4. **成功案例参考**
+             - 同类型优秀作品特点
+             - 可借鉴的创意点
+             - 避免的常见错误
+
+          请生成专业、实用、可执行的最终报告。
+      - id: final-user
+        role: user
+        text: |
+          请基于以下专业分析报告，生成综合评估：
+
+          ## 原始需求
+          - 视频类型：{{#1736412001000.video_type#}}
+          - 用户需求：{{#1736412001000.analysis_requirements#}}
+
+          ## 专业分析报告
+
+          ### 内容分析
+          {{#1736412001009.long_video_analysis#}}
+          {{#1736412001009.short_video_analysis#}}
+
+          ### 视觉风格分析
+          {{#1736412001009.visual_analysis#}}
+
+          ### 文案台词分析
+          {{#1736412001009.script_analysis#}}
+
+          ### 技术制作分析
+          {{#1736412001009.technical_analysis#}}
+
+          请生成包含评分、优化建议和执行方案的最终报告。
+      selected: false
+      title: 综合评估报告
+      type: llm
+    id: '1736412001010'
+    type: custom
+  - data:
+      desc: 格式化最终输出报告
+      selected: false
+      template: |
+        # 🎬 短视频专业分析评估报告
+
+        ## 📊 评估概览
+
+        **视频类型：** {{#1736412001000.video_type#}}
+        **分析时间：** {{ 'now' | date: '%Y-%m-%d %H:%M' }}
+        **分析维度：** 故事连贯性、画面风格统一性、文案吸引力、画质清晰度、技术制作
+
+        ---
+
+        ## �� 详细分析报告
+
+        {{#1736412001010.text#}}
+
+        ---
+
+        ## 📈 改进建议总结
+
+        ### 🚨 紧急改进项
+        - 需要立即处理的技术或内容问题
+
+        ### ⭐ 重要优化项
+        - 显著提升视频质量的改进点
+
+        ### 🎯 长期提升方向
+        - 战略性改进和品牌建设建议
+
+        ---
+
+        ## 💡 专业建议
+
+        > **制作团队建议：** 基于当前视频特点，建议在{{#1736412001000.video_type#}}类型内容上继续深耕，同时注意提升技术制作水准和用户体验设计。
+
+        **分析师签名：** DifyWorks 短视频分析系统  
+        **报告版本：** v1.0
+      title: 格式化报告
+      type: template-transform
+    id: '1736412001011'
+    type: custom
+  - data:
+      desc: 输出专业分析报告
+      outputs:
+      - value_selector:
+        - '1736412001011'
+        - output
+        variable: analysis_report
+      selected: false
+      title: 输出结果
+      type: end
+    id: '1736412001012'
+    type: custom 
