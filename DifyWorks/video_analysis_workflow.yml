@@ -1,0 +1,875 @@
+app:
+  icon: "🎬"
+  icon_background: "#FF6B6B"
+  mode: "workflow"
+  name: "短视频质量分析工具"
+  description: "基于GPT-4o的智能视频质量评估系统，支持多维度分析和专业报告生成"
+
+workflow:
+  graph:
+    nodes:
+      # 1. 开始节点
+      - data:
+          desc: "视频分析工作流启动"
+          selected: false
+          title: "开始"
+          type: "start"
+          variables:
+            - label: "视频文件"
+              max_length: 1000
+              options: []
+              required: true
+              type: "file"
+              variable: "video_file"
+            - label: "分析深度"
+              max_length: 50
+              options:
+                - label: "快速分析"
+                  value: "quick"
+                - label: "标准分析"
+                  value: "standard"
+                - label: "深度分析"
+                  value: "detailed"
+              required: false
+              type: "select"
+              variable: "analysis_depth"
+              default: "standard"
+        height: 90
+        id: "1698288093571"
+        position:
+          x: 80
+          y: 282
+        positionAbsolute:
+          x: 80
+          y: 282
+        selected: false
+        sourcePosition: "right"
+        targetPosition: "left"
+        type: "custom"
+        width: 244
+
+      # 2. 视频信息提取节点
+      - data:
+          desc: "提取视频基础信息和技术参数"
+          provider_id: "openai"
+          provider_name: "OpenAI"
+          provider_type: "system"
+          selected: false
+          title: "视频信息提取"
+          type: "llm"
+          model:
+            completion_params:
+              temperature: 0.1
+              top_p: 1
+              frequency_penalty: 0
+              presence_penalty: 0
+              max_tokens: 1000
+            mode: "chat"
+            name: "gpt-4o"
+            provider: "openai"
+          prompt_template:
+            - role: "system"
+              text: |
+                你是一个专业的视频分析专家。请分析上传的视频文件，提取以下基础信息：
+                
+                1. 视频时长（秒）
+                2. 分辨率（宽x高）
+                3. 帧率
+                4. 文件大小
+                5. 视频格式
+                6. 画面质量初步评估
+                7. 音频质量初步评估
+                
+                请以JSON格式返回结果：
+                {
+                  "duration": "视频时长秒数",
+                  "resolution": {"width": 宽度, "height": 高度},
+                  "fps": "帧率",
+                  "file_size": "文件大小MB",
+                  "format": "文件格式",
+                  "video_quality": "画面质量描述",
+                  "audio_quality": "音频质量描述",
+                  "is_valid": true/false
+                }
+            - role: "user"
+              text: "请分析这个视频文件: {{#1698288093571.video_file#}}"
+        height: 98
+        id: "1698288150123"
+        position:
+          x: 400
+          y: 280
+        positionAbsolute:
+          x: 400
+          y: 280
+        selected: false
+        sourcePosition: "right"
+        targetPosition: "left"
+        type: "custom"
+        width: 244
+
+      # 3. 分析路径决策节点
+      - data:
+          desc: "基于视频特征决定分析策略"
+          conditions:
+            - id: "short_video"
+              conditions:
+                - comparison_operator: "≤"
+                  id: "duration_check"
+                  value: "30"
+                  variable_selector:
+                    - "1698288150123"
+                    - "duration"
+              logical_operator: "and"
+            - id: "medium_video"
+              conditions:
+                - comparison_operator: ">"
+                  id: "duration_min"
+                  value: "30"
+                  variable_selector:
+                    - "1698288150123"
+                    - "duration"
+                - comparison_operator: "≤"
+                  id: "duration_max"
+                  value: "300"
+                  variable_selector:
+                    - "1698288150123"
+                    - "duration"
+              logical_operator: "and"
+            - id: "long_video"
+              conditions:
+                - comparison_operator: ">"
+                  id: "duration_long"
+                  value: "300"
+                  variable_selector:
+                    - "1698288150123"
+                    - "duration"
+              logical_operator: "and"
+          selected: false
+          title: "分析路径决策"
+          type: "if-else"
+        height: 126
+        id: "1698288200456"
+        position:
+          x: 720
+          y: 260
+        positionAbsolute:
+          x: 720
+          y: 260
+        selected: false
+        sourcePosition: "right"
+        targetPosition: "left"
+        type: "custom"
+        width: 244
+
+      # 4. 故事连贯性分析节点
+      - data:
+          desc: "分析视频的故事逻辑和叙事结构"
+          provider_id: "openai"
+          provider_name: "OpenAI"
+          provider_type: "system"
+          selected: false
+          title: "故事连贯性分析"
+          type: "llm"
+          model:
+            completion_params:
+              temperature: 0.3
+              top_p: 1
+              frequency_penalty: 0
+              presence_penalty: 0
+              max_tokens: 1500
+            mode: "chat"
+            name: "gpt-4o"
+            provider: "openai"
+          prompt_template:
+            - role: "system"
+              text: |
+                你是一个专业的视频内容分析师，专门评估视频的故事连贯性。请从以下维度分析视频：
+                
+                1. 叙事结构完整性
+                2. 情节逻辑连贯性
+                3. 人物发展一致性
+                4. 场景转换流畅性
+                5. 时间线清晰度
+                6. 主题表达明确性
+                
+                评分标准：1-10分（10分最高）
+                
+                请以JSON格式返回分析结果：
+                {
+                  "coherence_score": 8.5,
+                  "narrative_structure": "结构评价",
+                  "plot_consistency": "情节连贯性评价",
+                  "character_development": "人物发展评价",
+                  "scene_transitions": "场景转换评价",
+                  "storytelling_quality": "叙事技巧评价",
+                  "improvement_suggestions": ["建议1", "建议2"]
+                }
+            - role: "user"
+              text: |
+                请分析这个视频的故事连贯性：{{#1698288093571.video_file#}}
+                
+                视频信息：{{#1698288150123.text#}}
+        height: 98
+        id: "1698288250789"
+        position:
+          x: 1040
+          y: 180
+        positionAbsolute:
+          x: 1040
+          y: 180
+        selected: false
+        sourcePosition: "right"
+        targetPosition: "left"
+        type: "custom"
+        width: 244
+
+      # 5. 画面风格统一性分析节点
+      - data:
+          desc: "评估视频的视觉风格一致性"
+          provider_id: "openai"
+          provider_name: "OpenAI"
+          provider_type: "system"
+          selected: false
+          title: "画面风格统一性分析"
+          type: "llm"
+          model:
+            completion_params:
+              temperature: 0.3
+              top_p: 1
+              frequency_penalty: 0
+              presence_penalty: 0
+              max_tokens: 1500
+            mode: "chat"
+            name: "gpt-4o"
+            provider: "openai"
+          prompt_template:
+            - role: "system"
+              text: |
+                你是一个专业的视觉设计师，专门评估视频的画面风格统一性。请从以下维度分析：
+                
+                1. 色彩搭配和谐度
+                2. 光线运用一致性
+                3. 构图风格统一性
+                4. 视觉元素协调性
+                5. 品牌视觉一致性
+                6. 整体美学风格
+                
+                评分标准：1-10分（10分最高）
+                
+                请以JSON格式返回分析结果：
+                {
+                  "consistency_score": 7.8,
+                  "color_palette": "色彩评价",
+                  "lighting_style": "光线评价",
+                  "composition_quality": "构图评价",
+                  "visual_style": "视觉风格评价",
+                  "brand_consistency": "品牌一致性评价",
+                  "improvement_suggestions": ["建议1", "建议2"]
+                }
+            - role: "user"
+              text: |
+                请分析这个视频的画面风格统一性：{{#1698288093571.video_file#}}
+                
+                视频信息：{{#1698288150123.text#}}
+        height: 98
+        id: "1698288300112"
+        position:
+          x: 1040
+          y: 300
+        positionAbsolute:
+          x: 1040
+          y: 300
+        selected: false
+        sourcePosition: "right"
+        targetPosition: "left"
+        type: "custom"
+        width: 244
+
+      # 6. 文案台词吸引力分析节点
+      - data:
+          desc: "分析视频的语言表达和吸引力"
+          provider_id: "openai"
+          provider_name: "OpenAI"
+          provider_type: "system"
+          selected: false
+          title: "文案台词吸引力分析"
+          type: "llm"
+          model:
+            completion_params:
+              temperature: 0.3
+              top_p: 1
+              frequency_penalty: 0
+              presence_penalty: 0
+              max_tokens: 1500
+            mode: "chat"
+            name: "gpt-4o"
+            provider: "openai"
+          prompt_template:
+            - role: "system"
+              text: |
+                你是一个专业的文案策划师，专门评估视频的文案台词吸引力。请从以下维度分析：
+                
+                1. 语言表达生动性
+                2. 情感共鸣强度
+                3. 观众参与度
+                4. 行动号召有效性
+                5. 语调风格一致性
+                6. 信息传达清晰度
+                
+                评分标准：1-10分（10分最高）
+                
+                请以JSON格式返回分析结果：
+                {
+                  "appeal_score": 8.2,
+                  "language_quality": "语言质量评价",
+                  "emotional_impact": "情感影响评价",
+                  "audience_engagement": "观众参与度评价",
+                  "call_to_action": "行动号召评价",
+                  "tone_consistency": "语调一致性评价",
+                  "improvement_suggestions": ["建议1", "建议2"]
+                }
+            - role: "user"
+              text: |
+                请分析这个视频的文案台词吸引力：{{#1698288093571.video_file#}}
+                
+                视频信息：{{#1698288150123.text#}}
+        height: 98
+        id: "1698288350445"
+        position:
+          x: 1040
+          y: 420
+        positionAbsolute:
+          x: 1040
+          y: 420
+        selected: false
+        sourcePosition: "right"
+        targetPosition: "left"
+        type: "custom"
+        width: 244
+
+      # 7. 画质清晰度分析节点
+      - data:
+          desc: "评估视频的技术质量和清晰度"
+          provider_id: "openai"
+          provider_name: "OpenAI"
+          provider_type: "system"
+          selected: false
+          title: "画质清晰度分析"
+          type: "llm"
+          model:
+            completion_params:
+              temperature: 0.2
+              top_p: 1
+              frequency_penalty: 0
+              presence_penalty: 0
+              max_tokens: 1500
+            mode: "chat"
+            name: "gpt-4o"
+            provider: "openai"
+          prompt_template:
+            - role: "system"
+              text: |
+                你是一个专业的视频技术专家，专门评估视频的画质清晰度。请从以下维度分析：
+                
+                1. 分辨率适配性
+                2. 画面清晰度
+                3. 噪点控制水平
+                4. 压缩质量
+                5. 色彩还原度
+                6. 细节保留度
+                
+                评分标准：1-10分（10分最高）
+                
+                请以JSON格式返回分析结果：
+                {
+                  "quality_score": 8.0,
+                  "resolution_rating": "分辨率评价",
+                  "sharpness": "清晰度评价",
+                  "noise_level": "噪点评价",
+                  "compression_quality": "压缩质量评价",
+                  "color_accuracy": "色彩准确度评价",
+                  "improvement_suggestions": ["建议1", "建议2"]
+                }
+            - role: "user"
+              text: |
+                请分析这个视频的画质清晰度：{{#1698288093571.video_file#}}
+                
+                视频信息：{{#1698288150123.text#}}
+        height: 98
+        id: "1698288400778"
+        position:
+          x: 1040
+          y: 540
+        positionAbsolute:
+          x: 1040
+          y: 540
+        selected: false
+        sourcePosition: "right"
+        targetPosition: "left"
+        type: "custom"
+        width: 244
+
+      # 8. 技术制作水平分析节点
+      - data:
+          desc: "评估视频的后期制作工艺"
+          provider_id: "openai"
+          provider_name: "OpenAI"
+          provider_type: "system"
+          selected: false
+          title: "技术制作水平分析"
+          type: "llm"
+          model:
+            completion_params:
+              temperature: 0.3
+              top_p: 1
+              frequency_penalty: 0
+              presence_penalty: 0
+              max_tokens: 1500
+            mode: "chat"
+            name: "gpt-4o"
+            provider: "openai"
+          prompt_template:
+            - role: "system"
+              text: |
+                你是一个专业的视频后期制作专家，专门评估视频的技术制作水平。请从以下维度分析：
+                
+                1. 剪辑技巧专业度
+                2. 特效运用恰当性
+                3. 音频处理质量
+                4. 动画效果流畅性
+                5. 后期调色水平
+                6. 整体技术执行
+                
+                评分标准：1-10分（10分最高）
+                
+                请以JSON格式返回分析结果：
+                {
+                  "production_score": 8.3,
+                  "editing_quality": "剪辑质量评价",
+                  "special_effects": "特效评价",
+                  "audio_quality": "音频质量评价",
+                  "motion_graphics": "动画效果评价",
+                  "color_grading": "调色水平评价",
+                  "improvement_suggestions": ["建议1", "建议2"]
+                }
+            - role: "user"
+              text: |
+                请分析这个视频的技术制作水平：{{#1698288093571.video_file#}}
+                
+                视频信息：{{#1698288150123.text#}}
+        height: 98
+        id: "1698288450111"
+        position:
+          x: 1040
+          y: 660
+        positionAbsolute:
+          x: 1040
+          y: 660
+        selected: false
+        sourcePosition: "right"
+        targetPosition: "left"
+        type: "custom"
+        width: 244
+
+      # 9. 结果聚合节点
+      - data:
+          desc: "聚合所有分析维度的结果"
+          provider_id: "openai"
+          provider_name: "OpenAI"
+          provider_type: "system"
+          selected: false
+          title: "结果聚合"
+          type: "llm"
+          model:
+            completion_params:
+              temperature: 0.1
+              top_p: 1
+              frequency_penalty: 0
+              presence_penalty: 0
+              max_tokens: 2000
+            mode: "chat"
+            name: "gpt-4o"
+            provider: "openai"
+          prompt_template:
+            - role: "system"
+              text: |
+                你是一个专业的数据分析师，需要聚合视频分析的所有维度结果。请将以下五个维度的分析结果进行整合：
+                
+                1. 故事连贯性分析
+                2. 画面风格统一性分析
+                3. 文案台词吸引力分析
+                4. 画质清晰度分析
+                5. 技术制作水平分析
+                
+                请计算综合得分并生成聚合报告，以JSON格式返回：
+                {
+                  "overall_score": 综合得分,
+                  "dimension_scores": {
+                    "故事连贯性": 分数,
+                    "画面统一性": 分数,
+                    "文案吸引力": 分数,
+                    "画质清晰度": 分数,
+                    "技术制作": 分数
+                  },
+                  "grade": "S/A/B/C/D",
+                  "quality_level": "卓越/优秀/良好/一般/需改进",
+                  "aggregated_strengths": ["优势点1", "优势点2"],
+                  "aggregated_improvements": ["改进点1", "改进点2"]
+                }
+            - role: "user"
+              text: |
+                请聚合以下分析结果：
+                
+                故事连贯性分析：{{#1698288250789.text#}}
+                
+                画面风格统一性分析：{{#1698288300112.text#}}
+                
+                文案台词吸引力分析：{{#1698288350445.text#}}
+                
+                画质清晰度分析：{{#1698288400778.text#}}
+                
+                技术制作水平分析：{{#1698288450111.text#}}
+        height: 98
+        id: "1698288500444"
+        position:
+          x: 1380
+          y: 400
+        positionAbsolute:
+          x: 1380
+          y: 400
+        selected: false
+        sourcePosition: "right"
+        targetPosition: "left"
+        type: "custom"
+        width: 244
+
+      # 10. 综合评估生成节点
+      - data:
+          desc: "生成最终的综合评估报告"
+          provider_id: "openai"
+          provider_name: "OpenAI"
+          provider_type: "system"
+          selected: false
+          title: "综合评估生成"
+          type: "llm"
+          model:
+            completion_params:
+              temperature: 0.2
+              top_p: 1
+              frequency_penalty: 0
+              presence_penalty: 0
+              max_tokens: 3000
+            mode: "chat"
+            name: "gpt-4o"
+            provider: "openai"
+          prompt_template:
+            - role: "system"
+              text: |
+                你是一个资深的视频内容顾问，需要基于所有分析结果生成最终的综合评估报告。
+                
+                请生成一个专业、详细的评估报告，包含以下部分：
+                
+                1. 执行摘要
+                2. 各维度详细评分
+                3. 优势亮点分析
+                4. 改进建议
+                5. 战略性建议
+                6. 行动计划
+                
+                报告应该专业、客观、建设性，为视频创作者提供实用价值。
+                
+                请以结构化的文本格式返回报告。
+            - role: "user"
+              text: |
+                请基于以下信息生成综合评估报告：
+                
+                视频基础信息：{{#1698288150123.text#}}
+                
+                聚合分析结果：{{#1698288500444.text#}}
+                
+                分析深度设置：{{#1698288093571.analysis_depth#}}
+        height: 98
+        id: "1698288550777"
+        position:
+          x: 1700
+          y: 400
+        positionAbsolute:
+          x: 1700
+          y: 400
+        selected: false
+        sourcePosition: "right"
+        targetPosition: "left"
+        type: "custom"
+        width: 244
+
+      # 11. 专业报告格式化节点
+      - data:
+          desc: "将评估结果格式化为专业报告"
+          code: |
+            import json
+            from datetime import datetime
+            
+            def main(args):
+                # 获取输入数据
+                video_info = args.get("video_info", "{}")
+                aggregated_results = args.get("aggregated_results", "{}")
+                comprehensive_evaluation = args.get("comprehensive_evaluation", "")
+                
+                try:
+                    # 解析JSON数据
+                    video_data = json.loads(video_info) if isinstance(video_info, str) else video_info
+                    results_data = json.loads(aggregated_results) if isinstance(aggregated_results, str) else aggregated_results
+                    
+                    # 生成报告头部
+                    report = f"""
+            # 短视频质量分析报告
+            
+            **分析时间**: {datetime.now().strftime('%Y年%m月%d日 %H:%M:%S')}
+            **视频文件**: {video_data.get('filename', '未知')}
+            **分析版本**: DifyWorks v1.0
+            
+            ---
+            
+            ## 📊 执行摘要
+            
+            {comprehensive_evaluation}
+            
+            ---
+            
+            ## 📈 详细评分
+            
+            ### 综合评分: {results_data.get('overall_score', 0)}/10 ({results_data.get('grade', 'N/A')}级)
+            
+            ### 各维度得分:
+            """
+                    
+                    # 添加各维度评分
+                    dimension_scores = results_data.get('dimension_scores', {})
+                    for dimension, score in dimension_scores.items():
+                        report += f"- **{dimension}**: {score}/10\n"
+                    
+                    # 添加视频基础信息
+                    report += f"""
+            
+            ---
+            
+            ## 📹 视频基础信息
+            
+            - **时长**: {video_data.get('duration', 0)}秒
+            - **分辨率**: {video_data.get('resolution', {}).get('width', 0)} x {video_data.get('resolution', {}).get('height', 0)}
+            - **帧率**: {video_data.get('fps', 0)}fps
+            - **文件大小**: {video_data.get('file_size', 0)}MB
+            - **格式**: {video_data.get('format', '未知')}
+            
+            ---
+            
+            ## ✅ 优势亮点
+            
+            """
+                    
+                    # 添加优势点
+                    strengths = results_data.get('aggregated_strengths', [])
+                    for strength in strengths:
+                        report += f"- {strength}\n"
+                    
+                    # 添加改进建议
+                    report += f"""
+            
+            ---
+            
+            ## 🔧 改进建议
+            
+            """
+                    
+                    improvements = results_data.get('aggregated_improvements', [])
+                    for improvement in improvements:
+                        report += f"- {improvement}\n"
+                    
+                    # 添加评分说明
+                    report += f"""
+            
+            ---
+            
+            ## 📝 评分说明
+            
+            - **S级 (9.0-10.0)**: 卓越水准，行业领先
+            - **A级 (8.0-8.9)**: 优秀水准，质量很高
+            - **B级 (7.0-7.9)**: 良好水准，符合标准
+            - **C级 (6.0-6.9)**: 一般水准，有待提升
+            - **D级 (0-5.9)**: 需要改进，重点优化
+            
+            ---
+            
+            ## 🎯 建议行动
+            
+            基于当前评分({results_data.get('grade', 'N/A')}级)，建议优先处理以下方面：
+            
+            1. **立即优化**: 评分低于7分的维度
+            2. **持续提升**: 评分7-8分的维度
+            3. **保持优势**: 评分8分以上的维度
+            
+            ---
+            
+            *本报告由DifyWorks视频分析系统自动生成*
+            """
+                    
+                    return {
+                        "formatted_report": report,
+                        "report_summary": f"分析完成 - 综合评分: {results_data.get('overall_score', 0)}/10 ({results_data.get('grade', 'N/A')}级)",
+                        "timestamp": datetime.now().isoformat()
+                    }
+                    
+                except Exception as e:
+                    return {
+                        "formatted_report": f"报告生成失败: {str(e)}",
+                        "report_summary": "生成失败",
+                        "timestamp": datetime.now().isoformat()
+                    }
+          selected: false
+          title: "专业报告格式化"
+          type: "code"
+          variables:
+            - value_selector:
+                - "1698288150123"
+                - "text"
+              variable: "video_info"
+            - value_selector:
+                - "1698288500444"
+                - "text"
+              variable: "aggregated_results"
+            - value_selector:
+                - "1698288550777"
+                - "text"
+              variable: "comprehensive_evaluation"
+        height: 54
+        id: "1698288600000"
+        position:
+          x: 2020
+          y: 400
+        positionAbsolute:
+          x: 2020
+          y: 400
+        selected: false
+        sourcePosition: "right"
+        targetPosition: "left"
+        type: "custom"
+        width: 244
+
+      # 12. 结束节点
+      - data:
+          outputs:
+            - value_selector:
+                - "1698288600000"
+                - "formatted_report"
+              variable: "final_report"
+            - value_selector:
+                - "1698288600000"
+                - "report_summary"
+              variable: "summary"
+            - value_selector:
+                - "1698288500444"
+                - "text"
+              variable: "detailed_scores"
+          selected: false
+          title: "结束"
+          type: "end"
+        height: 90
+        id: "1698288700666"
+        position:
+          x: 2340
+          y: 400
+        positionAbsolute:
+          x: 2340
+          y: 400
+        selected: false
+        sourcePosition: "right"
+        targetPosition: "left"
+        type: "custom"
+        width: 244
+
+    # 连接关系
+    edges:
+      # 开始 -> 视频信息提取
+      - id: "1698288093571-1698288150123"
+        source: "1698288093571"
+        target: "1698288150123"
+        type: ""
+
+      # 视频信息提取 -> 分析路径决策
+      - id: "1698288150123-1698288200456"
+        source: "1698288150123"
+        target: "1698288200456"
+        type: ""
+
+      # 分析路径决策 -> 各分析节点
+      - id: "1698288200456-1698288250789"
+        source: "1698288200456"
+        target: "1698288250789"
+        type: ""
+
+      - id: "1698288200456-1698288300112"
+        source: "1698288200456"
+        target: "1698288300112"
+        type: ""
+
+      - id: "1698288200456-1698288350445"
+        source: "1698288200456"
+        target: "1698288350445"
+        type: ""
+
+      - id: "1698288200456-1698288400778"
+        source: "1698288200456"
+        target: "1698288400778"
+        type: ""
+
+      - id: "1698288200456-1698288450111"
+        source: "1698288200456"
+        target: "1698288450111"
+        type: ""
+
+      # 各分析节点 -> 结果聚合
+      - id: "1698288250789-1698288500444"
+        source: "1698288250789"
+        target: "1698288500444"
+        type: ""
+
+      - id: "1698288300112-1698288500444"
+        source: "1698288300112"
+        target: "1698288500444"
+        type: ""
+
+      - id: "1698288350445-1698288500444"
+        source: "1698288350445"
+        target: "1698288500444"
+        type: ""
+
+      - id: "1698288400778-1698288500444"
+        source: "1698288400778"
+        target: "1698288500444"
+        type: ""
+
+      - id: "1698288450111-1698288500444"
+        source: "1698288450111"
+        target: "1698288500444"
+        type: ""
+
+      # 结果聚合 -> 综合评估生成
+      - id: "1698288500444-1698288550777"
+        source: "1698288500444"
+        target: "1698288550777"
+        type: ""
+
+      # 综合评估生成 -> 专业报告格式化
+      - id: "1698288550777-1698288600000"
+        source: "1698288550777"
+        target: "1698288600000"
+        type: ""
+
+      # 专业报告格式化 -> 结束
+      - id: "1698288600000-1698288700666"
+        source: "1698288600000"
+        target: "1698288700666"
+        type: ""
+
+environment_variables: []
+conversation_variables: [] 
