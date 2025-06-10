@@ -1,0 +1,396 @@
+app:
+  description: ''
+  icon: ❤️‍🩹
+  icon_background: '#FFE4E8'
+  mode: workflow
+  name: 文本情感分析工作流
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/openai:0.0.26@c1e643ac6a7732f6333a783320b4d3026fa5e31d8e7026375b98d44418d33f26
+kind: app
+version: 0.3.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        image_file_size_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: false
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        sourceType: llm
+        targetType: end
+      id: 1711708651402-1711708653229
+      source: '1711708651402'
+      sourceHandle: source
+      target: '1711708653229'
+      targetHandle: target
+      type: custom
+    - data:
+        sourceType: start
+        targetType: if-else
+      id: 1711708591503-1711708770787
+      source: '1711708591503'
+      sourceHandle: source
+      target: '1711708770787'
+      targetHandle: target
+      type: custom
+    - data:
+        sourceType: llm
+        targetType: end
+      id: 1711708925268-1712457684421
+      source: '1711708925268'
+      sourceHandle: source
+      target: '1712457684421'
+      targetHandle: target
+      type: custom
+    - data:
+        sourceType: if-else
+        targetType: llm
+      id: 1711708770787-1711708651402
+      source: '1711708770787'
+      sourceHandle: 'false'
+      target: '1711708651402'
+      targetHandle: target
+      type: custom
+    - data:
+        sourceType: if-else
+        targetType: llm
+      id: 1711708770787-1711708925268
+      source: '1711708770787'
+      sourceHandle: 'true'
+      target: '1711708925268'
+      targetHandle: target
+      type: custom
+    nodes:
+    - data:
+        desc: ''
+        selected: false
+        title: 开始
+        type: start
+        variables:
+        - label: 输入文本
+          max_length: null
+          options: []
+          required: true
+          type: paragraph
+          variable: input_text
+        - label: 情感种类是否多选
+          max_length: 48
+          options:
+          - 'True'
+          - 'False'
+          required: true
+          type: select
+          variable: Multisentiment
+        - label: 情感类别
+          max_length: 48
+          options: []
+          required: false
+          type: text-input
+          variable: Categories
+      height: 142
+      id: '1711708591503'
+      position:
+        x: 79.5
+        y: 313.5
+      positionAbsolute:
+        x: 79.5
+        y: 313.5
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        model:
+          completion_params:
+            frequency_penalty: 0
+            max_tokens: 512
+            presence_penalty: 0
+            temperature: 0.7
+            top_p: 1
+          mode: chat
+          name: gpt-3.5-turbo
+          provider: langgenius/openai/openai
+        prompt_template:
+        - role: system
+          text: '你是一个文本情感分析模型。分析文本情绪，进行分类，并提取积极和消极关键词。如果没有提供分类，应自动确定分类。分配一个情绪得分（从-1.0到1.0，以0.1为增量）。只返回JSON响应。
+
+            始终尝试返回情绪得分，不要有异常。
+
+            为适用于输入文本的每个分类定义一个情绪得分。不包括与文本不适用的分类。跳过某些分类是可以的。
+
+            重要：将输出格式化为JSON。只返回JSON响应，不添加其他评论或文本。如果你返回的是除JSON以外的任何文本，你将失败。'
+        - role: user
+          text: '输入文本：披萨很美味，员工很友好，等待时间较长。
+
+            分类：质量，服务，价格'
+        - role: assistant
+          text: "[\n\t{\n\t\t\"category\": \"质量\",\n\t\t\"positive_keywords\": [\n\
+            \t\t\t\"美味的披萨\"\n\t\t],\n\t\t\"negative_keywords\": [],\n\t\t\"score\"\
+            : 0.7,\n\t\t\"sentiment\": \"正面\"\n\t},\n\t{\n\t\t\"category\": \"服务\"\
+            ,\n\t\t\"positive_keywords\": [\n\t\t\t\"友好的员工\"\n\t\t],\n\t\t\"negative_keywords\"\
+            : [],\n\t\t\"score\": 0.6,\n\t\t\"sentiment\": \"正面\"\n\t}\n]\n"
+        - role: user
+          text: '输入文本: {{#1711708591503.input_text#}}
+
+
+            类别: {{#1711708591503.Categories#}}'
+        selected: false
+        title: 多情绪为假
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 90
+      id: '1711708651402'
+      position:
+        x: 654.0714285714286
+        y: 526.3571428571429
+      positionAbsolute:
+        x: 654.0714285714286
+        y: 526.3571428571429
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - '1711708651402'
+          - text
+          variable: text
+        selected: false
+        title: 结束 2
+        type: end
+      height: 90
+      id: '1711708653229'
+      position:
+        x: 948.5
+        y: 526.3571428571429
+      positionAbsolute:
+        x: 948.5
+        y: 526.3571428571429
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: is
+            id: '1711708913752'
+            value: 'True'
+            variable_selector:
+            - '1711708591503'
+            - Multisentiment
+          logical_operator: and
+        conditions:
+        - comparison_operator: is
+          id: '1711708913752'
+          value: 'True'
+          variable_selector:
+          - '1711708591503'
+          - Multisentiment
+        desc: ''
+        logical_operator: and
+        selected: false
+        title: 条件分支
+        type: if-else
+      height: 126
+      id: '1711708770787'
+      position:
+        x: 362.5
+        y: 313.5
+      positionAbsolute:
+        x: 362.5
+        y: 313.5
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        model:
+          completion_params:
+            frequency_penalty: 0
+            max_tokens: 512
+            presence_penalty: 0
+            temperature: 0.7
+            top_p: 1
+          mode: chat
+          name: gpt-3.5-turbo
+          provider: langgenius/openai/openai
+        prompt_template:
+        - role: system
+          text: '你是一个文本情感分析模型。分析文本情感，进行分类，并提取积极和消极关键词。如果没有提供类别，应自动确定类别。分配一个情感分数（-1.0到1.0，以0.1为增量）。仅返回JSON响应。
+
+            始终尝试返回一个情感分数，不得有异常。
+
+            为整个文本定义一个单一分数，并识别与该文本相关的类别
+
+            重要提示：将输出格式化为JSON。只返回JSON响应，不添加其他评论或文本。如果返回的文本不是JSON，将视为失败。'
+        - role: user
+          text: '输入文本：披萨很美味，员工很友好，等待时间较长。
+
+            分类：质量，服务，价格'
+        - role: assistant
+          text: "{\n    \"positive_keywords\": [\"美味\", \"友好的员工\"],\n    \"negative_keywords\"\
+            : [\"等待时间长\"],\n    \"score\": 0.3,\n    \"sentiment\": \"略微积极\",\n  \
+            \  \"categories\": [\"质量\", \"服务\"]\n}"
+        - role: user
+          text: '输入文本: {{#1711708591503.input_text#}}
+
+            类别: {{#1711708591503.Categories#}}'
+        selected: false
+        title: 多重情感为真
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 90
+      id: '1711708925268'
+      position:
+        x: 644.0714285714286
+        y: 227.35714285714283
+      positionAbsolute:
+        x: 644.0714285714286
+        y: 227.35714285714283
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - '1711708925268'
+          - text
+          variable: text
+        selected: false
+        title: 结束
+        type: end
+      height: 90
+      id: '1712457684421'
+      position:
+        x: 924.2142857142858
+        y: 227.35714285714283
+      positionAbsolute:
+        x: 924.2142857142858
+        y: 227.35714285714283
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        author: Dify
+        desc: ''
+        height: 195
+        selected: false
+        showAuthor: true
+        text: '{"root":{"children":[{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"input_text：如何需要识别情感的文本；","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":0},{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"Multisentiment：文本中是否含有多种情感，布尔值；","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":0},{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"Categories：可选择填写，如果填写了会限制
+          LLM 识别你填写的内容，而不会自由发挥。","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":0}],"direction":"ltr","format":"","indent":0,"type":"root","version":1}}'
+        theme: blue
+        title: ''
+        type: ''
+        width: 365
+      height: 195
+      id: '1718994193060'
+      position:
+        x: 78.72676052802971
+        y: 83.82339918419211
+      positionAbsolute:
+        x: 78.72676052802971
+        y: 83.82339918419211
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom-note
+      width: 365
+    - data:
+        author: Dify
+        desc: ''
+        height: 115
+        selected: false
+        showAuthor: true
+        text: '{"root":{"children":[{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"本工作流主要用于示范机器学习中，可以使用
+          LLM 来制造合成数据和批量打标签。","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":0}],"direction":"ltr","format":"","indent":0,"type":"root","version":1}}'
+        theme: pink
+        title: ''
+        type: ''
+        width: 256
+      height: 115
+      id: '1718994253968'
+      position:
+        x: -257.98741804083267
+        y: 341.35904854998614
+      positionAbsolute:
+        x: -257.98741804083267
+        y: 341.35904854998614
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom-note
+      width: 256
+    viewport:
+      x: 463.240450552537
+      y: -47.02802294316541
+      zoom: 1.5087574948749263
