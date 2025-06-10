@@ -3,7 +3,7 @@ app:
   icon: 🎬
   icon_background: '#FFE4E8'
   mode: workflow
-  name: 短视频分析工作流
+  name: 短视频分析工作流-1
   use_icon_as_answer_icon: false
 dependencies:
 - current_identifier: null
@@ -29,12 +29,12 @@ workflow:
       - local_file
       - remote_url
       enabled: true
-      fileUploadConfig:
+        fileUploadConfig:
         audio_file_size_limit: 50
         batch_count_limit: 5
-        file_size_limit: 100
+        file_size_limit: 15
         image_file_size_limit: 10
-        video_file_size_limit: 200
+        video_file_size_limit: 100
         workflow_file_upload_limit: 10
       image:
         enabled: false
@@ -152,7 +152,7 @@ workflow:
         type: start
         variables:
         - label: 视频文件
-          max_length: null
+          max_length: 48
           options: []
           required: true
           type: file
