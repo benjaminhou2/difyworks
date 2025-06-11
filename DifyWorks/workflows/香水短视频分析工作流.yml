@@ -1,0 +1,533 @@
+app:
+  description: 专业的香水短视频内容分析与优化工具，面向西班牙TikTok市场，提供7维度评估和本地化文案创作
+  icon: 🌹
+  icon_background: '#FDF2F8'
+  mode: workflow
+  name: 香水短视频分析工作流
+environment_variables: []
+kind: app
+version: 0.1.1
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_types:
+      - video
+      - document
+      image:
+        detail: high
+        enabled: true
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+    opening_statement: '欢迎使用香水短视频分析工作流！🌹
+
+
+      我是「短视频精灵」，专门为香水类短视频提供专业分析和西班牙市场本地化建议。
+
+
+      **我能为您做什么：**
+
+      🎯 **7维度专业评估** - 从吸引力、创意、节奏等角度全面分析
+
+      🇪🇸 **西班牙市场适配** - 提供本地化文案和文化建议
+
+      📊 **量化评分报告** - 700分评分体系，精准定位问题
+
+      🚀 **优化行动计划** - 即时调整+重拍建议+策略升级
+
+
+      **请上传您的香水短视频文件，开始专业分析！**'
+    retriever_resource:
+      enabled: false
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        sourceType: start
+        targetType: doc-extractor
+      id: 1735636859084-source-1735636859268-target
+      source: '1735636859084'
+      sourceHandle: source
+      target: '1735636859268'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: doc-extractor
+        targetType: llm
+      id: 1735636859268-source-1735636859368-target
+      source: '1735636859268'
+      sourceHandle: source
+      target: '1735636859368'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: llm
+        targetType: variable-aggregator
+      id: 1735636859368-source-1735636859568-target
+      source: '1735636859368'
+      sourceHandle: source
+      target: '1735636859568'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: variable-aggregator
+        targetType: llm
+      id: 1735636859568-source-1735636859668-target
+      source: '1735636859568'
+      sourceHandle: source
+      target: '1735636859668'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: llm
+        targetType: template
+      id: 1735636859668-source-1735636859768-target
+      source: '1735636859668'
+      sourceHandle: source
+      target: '1735636859768'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: template
+        targetType: end
+      id: 1735636859768-source-1735636859868-target
+      source: '1735636859768'
+      sourceHandle: source
+      target: '1735636859868'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        desc: ''
+        selected: false
+        title: 开始
+        type: start
+        variables:
+        - description: 请上传香水短视频文件进行分析
+          file_types:
+          - video/mp4
+          - video/mov
+          - video/avi
+          - video/quicktime
+          label: 视频文件
+          max_length: 48
+          required: true
+          type: files
+          variable: video_files
+      height: 116
+      id: '1735636859084'
+      position:
+        x: 30
+        y: 282
+      positionAbsolute:
+        x: 30
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: 提取视频中的文字信息，包括字幕、标识等
+        selected: false
+        title: 视频文字提取
+        type: doc-extractor
+        vision:
+          configs:
+            detail: high
+          enabled: true
+        doc_type: ''
+        extract_settings:
+        - source: '{{#1735636859084.video_files#}}'
+          extract_type: text
+      height: 54
+      id: '1735636859268'
+      position:
+        x: 334
+        y: 282
+      positionAbsolute:
+        x: 334
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: 基于7维度专业标准对香水短视频进行全面分析评估
+        model:
+          completion_params:
+            temperature: 0.3
+          mode: chat
+          name: gpt-4o
+          provider: openai
+        prompt_template:
+        - id: 5a32e327-7747-4dcb-8d29-0c4b62f5ecac
+          role: system
+          text: "你是「短视频精灵」(Perfume Video Wizard)，一个专业的香水类短视频内容分析师，具备以下专业能力：\n\n**专业领域**：\n- \U0001F3AC 短视频内容分析与审核专家\n- \U0001F339 香水产品营销策略顾问  \n- \U0001F1EA\U0001F1F8 西班牙TikTok市场本地化专家\n- \U0001F4F1 多模态内容识别与评估专家\n\n**核心技能**：\n1. 视频内容全维度解析(画面、声音、文字)\n2. 基于7大专业维度的量化评估\n3. 西班牙语文化适配和双语文案创作\n4. 可执行的优化建议生成\n\n**工作原则**：\n- 评估标准科学严谨，评分有据可依\n- 建议具体可操作，避免空泛概念\n- 充分考虑香水产品特殊性和拍摄限制\n- 文案创作符合西班牙文化和TikTok传播特点"
+        - id: 50e6b4c3-eda2-43d1-b624-c3a2dd7e3156
+          role: user
+          text: "请对上传的香水短视频进行全面分析，按照以下步骤执行：\n\n## 第一步：视频内容识别\n\n**技术解析要求**：\n1. **基本信息提取**：视频时长、分辨率、主要场景\n2. **画面内容描述**：\n   - 拍摄场景和环境布置\n   - 香水产品展示方式和角度\n   - 人物动作和手势(考虑无人脸出镜限制)\n   - 道具使用和色彩搭配\n3. **文字信息识别**：字幕、屏幕文字、品牌标识\n4. **音频内容分析**：口播内容、背景音乐风格、音效使用\n5. **产品信息识别**：香水品牌、瓶身设计特征、使用场景\n\n## 第二步：7维度专业评估\n\n按照以下评估体系对视频进行量化评分(每个维度100分，总分700分)：\n\n### 1. \U0001F3AF 吸引力维度 (前3秒表现)\n**评分权重分配**：\n- 情绪冲击力(40分)：开场3秒内的情绪钩子强度\n- 视觉张力(35分)：色彩、构图、动作的视觉吸引力\n- 卖点切入(25分)：产品和核心价值的展示速度\n\n**评分标准**：\n- 90-100分：多重吸引元素完美融合，瞬间抓住注意力\n- 80-89分：有明显亮点，能有效吸引用户停留\n- 70-79分：有吸引元素但不够突出\n- 60-69分：吸引力一般，需要优化\n- 60分以下：缺乏有效吸引点\n\n**特别关注**：\n- 避免过度夸张：\"震惊！这款香水让男神为我疯狂\"\n- 推荐自然好奇：\"用了三年的香水，今天才发现这个秘密\"\n\n### 2. \U0001F3A8 内容创意维度\n**评分权重分配**：\n- 共鸣感建立(40分)：是否贴近西班牙女性日常生活\n- 创意融合度(35分)：创意与产品展示的自然结合\n- 场景代入感(25分)：使用场景的真实性和代入感\n\n**西班牙市场特殊要求**：\n- 生活方式是否贴近当地女性日常\n- 情感表达是否符合拉丁文化习惯\n- 香水使用场景是否符合当地社交文化\n\n### 3. \U0001F3AF 主题聚焦维度\n**评分权重分配**：\n- 卖点明确度(45分)：核心价值表达的清晰度\n- 场景契合度(35分)：使用场景与产品特点的匹配\n- 用户匹配度(20分)：内容与目标用户群体的契合\n\n**香水卖点层次分析**：\n- 基础功能：香味特征、持久度、适用场合\n- 情感价值：魅力提升、自信建立、个性表达\n- 社交价值：印象改善、社交加分、品味体现\n\n### 4. ⏰ 节奏控制维度\n**评分权重分配**：\n- 切换顺畅度(40分)：画面转换的自然流畅程度\n- 高潮设置(35分)：是否有明显的情绪高潮点\n- 音画同步度(25分)：BGM与画面节奏的协调性\n\n**香水拍摄特殊要求**：\n- 喷洒动作的慢镜头处理效果\n- 瓶身细节的特写时机\n- 香味扩散的视觉化表达\n\n### 5. \U0001F4DD 文案引导力维度\n**评分权重分配**：\n- 钩子文案效果(45分)：开场文案的吸引力和自然度\n- 卖点导入逻辑(35分)：从钩子到产品的逻辑流畅性\n- 互动引导自然度(20分)：评论引导的自然程度\n\n**避免模板化表达**：\n- ❌ \"99%的女生都不知道...\"\n- ❌ \"看完这个你就明白了...\"\n- ✅ 创造独特且自然的表达方式\n\n### 6. \U0001F3A8 画面美感维度\n**评分权重分配**：\n- 技术质量(40分)：清晰度、稳定性、曝光控制\n- 美学风格(35分)：色彩搭配与香水调性的匹配\n- 产品展示质量(25分)：香水瓶身的展示效果\n\n**无人脸拍摄创意评估**：\n- 手部动作的优雅程度\n- 身体局部展示的美感\n- 环境氛围的营造效果\n\n### 7. \U0001F3B5 声音配乐维度\n**评分权重分配**：\n- 口播质量(45分)：语音清晰度和情绪表达\n- 配乐契合度(35分)：BGM与香水调性、西班牙文化的匹配\n- 整体协调性(20分)：音画同步和音效运用\n\n## 第三步：问题诊断\n基于评估结果，识别主要问题：\n- 列出得分低于80分的维度\n- 分析具体问题点和影响程度\n- 评估改进的紧急程度和难易度\n\n**输出要求**：\n每个维度提供具体评分和详细评分依据，问题诊断要具体到可操作的改进点。\n\n**视频文件**：{{#1735636859084.video_files#}}\n**提取的文字信息**：{{#1735636859268.text#}}"
+        selected: false
+        title: 7维度专业分析
+        type: llm
+        variables: []
+        vision:
+          enabled: true
+      height: 98
+      id: '1735636859368'
+      position:
+        x: 638
+        y: 282
+      positionAbsolute:
+        x: 638
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: 聚合分析结果，为后续文案生成准备数据
+        selected: false
+        title: 结果聚合
+        type: variable-aggregator
+        variables:
+        - variable_name: analysis_result
+          variable_selector:
+          - '1735636859368'
+          - text
+        - variable_name: video_files
+          variable_selector:
+          - '1735636859084'
+          - video_files
+        - variable_name: extracted_text
+          variable_selector:
+          - '1735636859268'
+          - text
+      height: 54
+      id: '1735636859568'
+      position:
+        x: 942
+        y: 282
+      positionAbsolute:
+        x: 942
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: 基于分析结果生成西班牙市场本地化文案和优化建议
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: gpt-4o
+          provider: openai
+        prompt_template:
+        - id: 7a8e2b21-4c5a-4b3a-8f9e-1d2e3f4a5b6c
+          role: system
+          text: "你是香水短视频文案创作和优化建议专家，擅长西班牙市场本地化和TikTok内容策略。"
+        - id: 8b9f3c32-5d6e-4c7f-9a0b-2e3f4a5b6c7d
+          role: user
+          text: "基于前面的视频分析结果，请完成以下任务：\n\n## 任务1：西班牙市场文案创作\n\n为西班牙TikTok市场创作3条本地化文案：\n\n**目标用户**：18-35岁西班牙女性，注重品质但价格敏感，重视家庭和社交关系\n\n**语言风格**：\n- 情感表达直接热情，符合拉丁文化特点\n- 使用贴近生活的口语化表达\n- 适量融入当地流行语和表达习惯\n- 避免过于正式的商业化表达\n\n**文案类型分布**：\n1. **情感共鸣型**：建立情感连接，引发共鸣\n2. **产品功能型**：突出香水的核心价值和效果\n3. **互动引导型**：自然引导用户参与互动\n\n**创作格式**：\n### 文案1：情感共鸣型\n**中文版本**：[50-80字，重点在情感建立]\n**西班牙语版本**：[完整翻译+本地化调整，注意语法和文化适配]\n**应用场景**：[具体使用时机和场合]\n**预期效果**：[希望达到的用户反应]\n\n### 文案2：产品功能型  \n**中文版本**：[50-80字，重点在产品卖点]\n**西班牙语版本**：[完整翻译+本地化调整]\n**应用场景**：[具体使用时机和场合]\n**预期效果**：[希望达到的用户反应]\n\n### 文案3：互动引导型\n**中文版本**：[50-80字，重点在互动引导]\n**西班牙语版本**：[完整翻译+本地化调整]\n**应用场景**：[具体使用时机和场合]\n**预期效果**：[希望达到的用户反应]\n\n## 任务2：优化建议生成\n\n基于分析结果，提供具体可执行的优化建议：\n\n### 即时优化 (可立即调整，无需重拍)\n针对评分60-79分的问题，提供：\n- **具体问题点**：明确指出需要调整的内容\n- **调整方法**：详细的操作步骤\n- **预期效果**：调整后的改善程度\n\n### 重拍建议 (需要重新制作内容)\n针对评分60分以下的严重问题，提供：\n- **核心问题分析**：根本原因和影响程度\n- **重拍关键要点**：必须改进的核心元素\n- **参考案例方向**：成功案例的特点分析\n\n### 策略升级 (长期内容策略改进)\n基于整体表现，提供：\n- **内容策略调整方向**：未来内容创作的重点\n- **拍摄技巧提升建议**：技术层面的改进空间\n- **市场趋势对接建议**：与当前趋势的结合点\n\n**分析结果数据**：{{#1735636859568.analysis_result#}}\n\n**质量要求**：\n- 西班牙语语法必须正确且自然\n- 建议必须具体可操作\n- 充分考虑香水产品特殊性和拍摄限制\n- 体现对西班牙市场文化的理解"
+        selected: false
+        title: 文案生成与建议
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 98
+      id: '1735636859668'
+      position:
+        x: 1246
+        y: 282
+      positionAbsolute:
+        x: 1246
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: 格式化最终的分析报告输出
+        selected: false
+        template: "# \U0001F339 香水短视频专业分析报告\n\n## \U0001F4CA **视频基本信息**\n基于上传的视频文件进行分析\n\n---\n\n## \U0001F3AF **7维度专业评估结果**\n\n{{#1735636859568.analysis_result#}}\n\n---\n\n## \U0001F3A8 **西班牙市场本地化方案**\n\n{{#1735636859668.text#}}\n\n---\n\n## \U0001F4DD **总结与建议**\n\n本报告基于专业的7维度评估体系，为香水类短视频在西班牙TikTok市场的优化提供科学指导。\n\n**关键改进方向：**\n- 优先处理评分低于80分的维度\n- 重点关注前3秒的吸引力设计\n- 加强西班牙文化本地化元素\n- 优化香水产品的视觉展示效果\n\n**下一步行动：**\n1. 根据即时优化建议调整当前内容\n2. 应用提供的西班牙语文案进行测试\n3. 制定重拍计划应对严重问题\n4. 建立长期内容策略优化机制\n\n---\n\n*\U0001F4DE 如需进一步的专业咨询或定制化分析，请联系我们的香水短视频营销专家团队。*"
+        title: 报告格式化
+        type: template
+        variables: []
+      height: 54
+      id: '1735636859768'
+      position:
+        x: 1550
+        y: 282
+      positionAbsolute:
+        x: 1550
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - '1735636859768'
+          - output
+          variable: analysis_report
+        selected: false
+        title: 结束
+        type: end
+      height: 90
+      id: '1735636859868'
+      position:
+        x: 1854
+        y: 282
+      positionAbsolute:
+        x: 1854
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+  nodes:
+  - data:
+      desc: ''
+      selected: false
+      title: 开始
+      type: start
+      variables:
+      - description: 请上传香水短视频文件进行分析
+        file_types:
+        - video/mp4
+        - video/mov
+        - video/avi
+        - video/quicktime
+        label: 视频文件
+        max_length: 48
+        required: true
+        type: files
+        variable: video_files
+    height: 116
+    id: '1735636859084'
+    position:
+      x: 30
+      y: 282
+    positionAbsolute:
+      x: 30
+      y: 282
+    selected: false
+    sourcePosition: right
+    targetPosition: left
+    type: custom
+    width: 244
+  - data:
+      desc: 提取视频中的文字信息，包括字幕、标识等
+      selected: false
+      title: 视频文字提取
+      type: doc-extractor
+      vision:
+        configs:
+          detail: high
+        enabled: true
+      doc_type: ''
+      extract_settings:
+      - source: '{{#1735636859084.video_files#}}'
+        extract_type: text
+    height: 54
+    id: '1735636859268'
+    position:
+      x: 334
+      y: 282
+    positionAbsolute:
+      x: 334
+      y: 282
+    selected: false
+    sourcePosition: right
+    targetPosition: left
+    type: custom
+    width: 244
+  - data:
+      context:
+        enabled: false
+        variable_selector: []
+      desc: 基于7维度专业标准对香水短视频进行全面分析评估
+      model:
+        completion_params:
+          temperature: 0.3
+        mode: chat
+        name: gpt-4o
+        provider: openai
+      prompt_template:
+      - id: 5a32e327-7747-4dcb-8d29-0c4b62f5ecac
+        role: system
+        text: "你是「短视频精灵」(Perfume Video Wizard)，一个专业的香水类短视频内容分析师，具备以下专业能力：\n\n**专业领域**：\n- \U0001F3AC 短视频内容分析与审核专家\n- \U0001F339 香水产品营销策略顾问  \n- \U0001F1EA\U0001F1F8 西班牙TikTok市场本地化专家\n- \U0001F4F1 多模态内容识别与评估专家\n\n**核心技能**：\n1. 视频内容全维度解析(画面、声音、文字)\n2. 基于7大专业维度的量化评估\n3. 西班牙语文化适配和双语文案创作\n4. 可执行的优化建议生成\n\n**工作原则**：\n- 评估标准科学严谨，评分有据可依\n- 建议具体可操作，避免空泛概念\n- 充分考虑香水产品特殊性和拍摄限制\n- 文案创作符合西班牙文化和TikTok传播特点"
+      - id: 50e6b4c3-eda2-43d1-b624-c3a2dd7e3156
+        role: user
+        text: "请对上传的香水短视频进行全面分析，按照以下步骤执行：\n\n## 第一步：视频内容识别\n\n**技术解析要求**：\n1. **基本信息提取**：视频时长、分辨率、主要场景\n2. **画面内容描述**：\n   - 拍摄场景和环境布置\n   - 香水产品展示方式和角度\n   - 人物动作和手势(考虑无人脸出镜限制)\n   - 道具使用和色彩搭配\n3. **文字信息识别**：字幕、屏幕文字、品牌标识\n4. **音频内容分析**：口播内容、背景音乐风格、音效使用\n5. **产品信息识别**：香水品牌、瓶身设计特征、使用场景\n\n## 第二步：7维度专业评估\n\n按照以下评估体系对视频进行量化评分(每个维度100分，总分700分)：\n\n### 1. \U0001F3AF 吸引力维度 (前3秒表现)\n**评分权重分配**：\n- 情绪冲击力(40分)：开场3秒内的情绪钩子强度\n- 视觉张力(35分)：色彩、构图、动作的视觉吸引力\n- 卖点切入(25分)：产品和核心价值的展示速度\n\n**评分标准**：\n- 90-100分：多重吸引元素完美融合，瞬间抓住注意力\n- 80-89分：有明显亮点，能有效吸引用户停留\n- 70-79分：有吸引元素但不够突出\n- 60-69分：吸引力一般，需要优化\n- 60分以下：缺乏有效吸引点\n\n**特别关注**：\n- 避免过度夸张：\"震惊！这款香水让男神为我疯狂\"\n- 推荐自然好奇：\"用了三年的香水，今天才发现这个秘密\"\n\n### 2. \U0001F3A8 内容创意维度\n**评分权重分配**：\n- 共鸣感建立(40分)：是否贴近西班牙女性日常生活\n- 创意融合度(35分)：创意与产品展示的自然结合\n- 场景代入感(25分)：使用场景的真实性和代入感\n\n**西班牙市场特殊要求**：\n- 生活方式是否贴近当地女性日常\n- 情感表达是否符合拉丁文化习惯\n- 香水使用场景是否符合当地社交文化\n\n### 3. \U0001F3AF 主题聚焦维度\n**评分权重分配**：\n- 卖点明确度(45分)：核心价值表达的清晰度\n- 场景契合度(35分)：使用场景与产品特点的匹配\n- 用户匹配度(20分)：内容与目标用户群体的契合\n\n**香水卖点层次分析**：\n- 基础功能：香味特征、持久度、适用场合\n- 情感价值：魅力提升、自信建立、个性表达\n- 社交价值：印象改善、社交加分、品味体现\n\n### 4. ⏰ 节奏控制维度\n**评分权重分配**：\n- 切换顺畅度(40分)：画面转换的自然流畅程度\n- 高潮设置(35分)：是否有明显的情绪高潮点\n- 音画同步度(25分)：BGM与画面节奏的协调性\n\n**香水拍摄特殊要求**：\n- 喷洒动作的慢镜头处理效果\n- 瓶身细节的特写时机\n- 香味扩散的视觉化表达\n\n### 5. \U0001F4DD 文案引导力维度\n**评分权重分配**：\n- 钩子文案效果(45分)：开场文案的吸引力和自然度\n- 卖点导入逻辑(35分)：从钩子到产品的逻辑流畅性\n- 互动引导自然度(20分)：评论引导的自然程度\n\n**避免模板化表达**：\n- ❌ \"99%的女生都不知道...\"\n- ❌ \"看完这个你就明白了...\"\n- ✅ 创造独特且自然的表达方式\n\n### 6. \U0001F3A8 画面美感维度\n**评分权重分配**：\n- 技术质量(40分)：清晰度、稳定性、曝光控制\n- 美学风格(35分)：色彩搭配与香水调性的匹配\n- 产品展示质量(25分)：香水瓶身的展示效果\n\n**无人脸拍摄创意评估**：\n- 手部动作的优雅程度\n- 身体局部展示的美感\n- 环境氛围的营造效果\n\n### 7. \U0001F3B5 声音配乐维度\n**评分权重分配**：\n- 口播质量(45分)：语音清晰度和情绪表达\n- 配乐契合度(35分)：BGM与香水调性、西班牙文化的匹配\n- 整体协调性(20分)：音画同步和音效运用\n\n## 第三步：问题诊断\n基于评估结果，识别主要问题：\n- 列出得分低于80分的维度\n- 分析具体问题点和影响程度\n- 评估改进的紧急程度和难易度\n\n**输出要求**：\n每个维度提供具体评分和详细评分依据，问题诊断要具体到可操作的改进点。\n\n**视频文件**：{{#1735636859084.video_files#}}\n**提取的文字信息**：{{#1735636859268.text#}}"
+      selected: false
+      title: 7维度专业分析
+      type: llm
+      variables: []
+      vision:
+        enabled: true
+    height: 98
+    id: '1735636859368'
+    position:
+      x: 638
+      y: 282
+    positionAbsolute:
+      x: 638
+      y: 282
+    selected: false
+    sourcePosition: right
+    targetPosition: left
+    type: custom
+    width: 244
+  - data:
+      desc: 聚合分析结果，为后续文案生成准备数据
+      selected: false
+      title: 结果聚合
+      type: variable-aggregator
+      variables:
+      - variable_name: analysis_result
+        variable_selector:
+        - '1735636859368'
+        - text
+      - variable_name: video_files
+        variable_selector:
+        - '1735636859084'
+        - video_files
+      - variable_name: extracted_text
+        variable_selector:
+        - '1735636859268'
+        - text
+    height: 54
+    id: '1735636859568'
+    position:
+      x: 942
+      y: 282
+    positionAbsolute:
+      x: 942
+      y: 282
+    selected: false
+    sourcePosition: right
+    targetPosition: left
+    type: custom
+    width: 244
+  - data:
+      context:
+        enabled: false
+        variable_selector: []
+      desc: 基于分析结果生成西班牙市场本地化文案和优化建议
+      model:
+        completion_params:
+          temperature: 0.7
+        mode: chat
+        name: gpt-4o
+        provider: openai
+      prompt_template:
+      - id: 7a8e2b21-4c5a-4b3a-8f9e-1d2e3f4a5b6c
+        role: system
+        text: "你是香水短视频文案创作和优化建议专家，擅长西班牙市场本地化和TikTok内容策略。"
+      - id: 8b9f3c32-5d6e-4c7f-9a0b-2e3f4a5b6c7d
+        role: user
+        text: "基于前面的视频分析结果，请完成以下任务：\n\n## 任务1：西班牙市场文案创作\n\n为西班牙TikTok市场创作3条本地化文案：\n\n**目标用户**：18-35岁西班牙女性，注重品质但价格敏感，重视家庭和社交关系\n\n**语言风格**：\n- 情感表达直接热情，符合拉丁文化特点\n- 使用贴近生活的口语化表达\n- 适量融入当地流行语和表达习惯\n- 避免过于正式的商业化表达\n\n**文案类型分布**：\n1. **情感共鸣型**：建立情感连接，引发共鸣\n2. **产品功能型**：突出香水的核心价值和效果\n3. **互动引导型**：自然引导用户参与互动\n\n**创作格式**：\n### 文案1：情感共鸣型\n**中文版本**：[50-80字，重点在情感建立]\n**西班牙语版本**：[完整翻译+本地化调整，注意语法和文化适配]\n**应用场景**：[具体使用时机和场合]\n**预期效果**：[希望达到的用户反应]\n\n### 文案2：产品功能型  \n**中文版本**：[50-80字，重点在产品卖点]\n**西班牙语版本**：[完整翻译+本地化调整]\n**应用场景**：[具体使用时机和场合]\n**预期效果**：[希望达到的用户反应]\n\n### 文案3：互动引导型\n**中文版本**：[50-80字，重点在互动引导]\n**西班牙语版本**：[完整翻译+本地化调整]\n**应用场景**：[具体使用时机和场合]\n**预期效果**：[希望达到的用户反应]\n\n## 任务2：优化建议生成\n\n基于分析结果，提供具体可执行的优化建议：\n\n### 即时优化 (可立即调整，无需重拍)\n针对评分60-79分的问题，提供：\n- **具体问题点**：明确指出需要调整的内容\n- **调整方法**：详细的操作步骤\n- **预期效果**：调整后的改善程度\n\n### 重拍建议 (需要重新制作内容)\n针对评分60分以下的严重问题，提供：\n- **核心问题分析**：根本原因和影响程度\n- **重拍关键要点**：必须改进的核心元素\n- **参考案例方向**：成功案例的特点分析\n\n### 策略升级 (长期内容策略改进)\n基于整体表现，提供：\n- **内容策略调整方向**：未来内容创作的重点\n- **拍摄技巧提升建议**：技术层面的改进空间\n- **市场趋势对接建议**：与当前趋势的结合点\n\n**分析结果数据**：{{#1735636859568.analysis_result#}}\n\n**质量要求**：\n- 西班牙语语法必须正确且自然\n- 建议必须具体可操作\n- 充分考虑香水产品特殊性和拍摄限制\n- 体现对西班牙市场文化的理解"
+      selected: false
+      title: 文案生成与建议
+      type: llm
+      variables: []
+      vision:
+        enabled: false
+    height: 98
+    id: '1735636859668'
+    position:
+      x: 1246
+      y: 282
+    positionAbsolute:
+      x: 1246
+      y: 282
+    selected: false
+    sourcePosition: right
+    targetPosition: left
+    type: custom
+    width: 244
+  - data:
+      desc: 格式化最终的分析报告输出
+      selected: false
+      template: "# \U0001F339 香水短视频专业分析报告\n\n## \U0001F4CA **视频基本信息**\n基于上传的视频文件进行分析\n\n---\n\n## \U0001F3AF **7维度专业评估结果**\n\n{{#1735636859568.analysis_result#}}\n\n---\n\n## \U0001F3A8 **西班牙市场本地化方案**\n\n{{#1735636859668.text#}}\n\n---\n\n## \U0001F4DD **总结与建议**\n\n本报告基于专业的7维度评估体系，为香水类短视频在西班牙TikTok市场的优化提供科学指导。\n\n**关键改进方向：**\n- 优先处理评分低于80分的维度\n- 重点关注前3秒的吸引力设计\n- 加强西班牙文化本地化元素\n- 优化香水产品的视觉展示效果\n\n**下一步行动：**\n1. 根据即时优化建议调整当前内容\n2. 应用提供的西班牙语文案进行测试\n3. 制定重拍计划应对严重问题\n4. 建立长期内容策略优化机制\n\n---\n\n*\U0001F4DE 如需进一步的专业咨询或定制化分析，请联系我们的香水短视频营销专家团队。*"
+      title: 报告格式化
+      type: template
+      variables: []
+    height: 54
+    id: '1735636859768'
+    position:
+      x: 1550
+      y: 282
+    positionAbsolute:
+      x: 1550
+      y: 282
+    selected: false
+    sourcePosition: right
+    targetPosition: left
+    type: custom
+    width: 244
+  - data:
+      desc: ''
+      outputs:
+      - value_selector:
+        - '1735636859768'
+        - output
+        variable: analysis_report
+      selected: false
+      title: 结束
+      type: end
+    height: 90
+    id: '1735636859868'
+    position:
+      x: 1854
+      y: 282
+    positionAbsolute:
+      x: 1854
+      y: 282
+    selected: false
+    sourcePosition: right
+    targetPosition: left
+    type: custom
+    width: 244 

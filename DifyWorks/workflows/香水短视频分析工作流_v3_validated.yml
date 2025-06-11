@@ -1,0 +1,239 @@
+app:
+  description: 专业的香水短视频内容分析与优化工具，面向西班牙TikTok市场，提供7维度评估和本地化文案创作。经过严格校验，确保可导入Dify平台。
+  icon: "🌹"
+  icon_background: "#FDF2F8"
+  mode: workflow
+  name: 香水短视频分析工作流 (V3 Validated)
+kind: app
+version: 0.4.0
+workflow:
+  features:
+    file_upload:
+      image:
+        enabled: true
+        number_limits: 6
+        transfer_methods:
+          - remote_url
+          - local_file
+    opening_statement: |
+      欢迎使用香水短视频分析工作流！🌹
+
+      我是「短视频精灵」，专门为香水类短视频提供专业分析和西班牙市场本地化建议。
+
+      **我能为您做什么：**
+      - 🎯 **7维度专业评估**: 从吸引力、创意、节奏等角度全面分析
+      - 🇪🇸 **西班牙市场适配**: 提供本地化文案和文化建议
+      - 📊 **量化评分报告**: 700分评分体系，精准定位问题
+      - 🚀 **优化行动计划**: 即时调整+重拍建议+策略升级
+
+      **请上传您的香水短视频文件，开始专业分析！**
+    suggested_questions_after_answer:
+      enabled: false
+  graph:
+    nodes:
+      - id: start-node
+        data:
+          title: "开始"
+          type: start
+          desc: "上传香水短视频文件"
+          variables:
+            - variable: video_file
+              label: "香水短视频"
+              type: file
+              required: true
+              file:
+                max_size: 50
+                batch_count: 1
+                extensions:
+                  - .mp4
+                  - .mov
+                  - .avi
+      - id: doc-extractor-node
+        data:
+          title: "视频转文字"
+          type: doc-extractor
+          desc: "提取视频中的语音和字幕信息"
+          extract_settings:
+            - extract_type: text
+              source: "{{#start-node.video_file#}}"
+          vision:
+            enabled: true
+            configs:
+              detail: high
+      - id: analysis-llm-node
+        data:
+          title: "7维度专业分析"
+          type: llm
+          desc: "基于7维度专业标准对香水短视频进行全面分析评估"
+          model:
+            provider: openai
+            name: gpt-4o
+            mode: chat
+            completion_params:
+              temperature: 0.3
+          vision:
+            enabled: true
+          prompt_template:
+            - role: system
+              text: |
+                你是「短视频精灵」(Perfume Video Wizard)，一个专业的香水类短视频内容分析师，具备以下专业能力：
+                - 🎬 短视频内容分析与审核专家
+                - 🌹 香水产品营销策略顾问
+                - 🇪🇸 西班牙TikTok市场本地化专家
+                - 📱 多模态内容识别与评估专家
+                **工作原则**: 评估标准科学严谨，评分有据可依，建议具体可操作，充分考虑香水产品特殊性和拍摄限制，文案创作符合西班牙文化和TikTok传播特点。
+            - role: user
+              text: |
+                # 任务：香水短视频全面分析
+
+                请对上传的香水短视频进行全面分析，严格按照以下步骤和标准执行：
+
+                ## 第一步：视频内容识别
+                1.  **基本信息提取**: 视频时长、分辨率、主要场景。
+                2.  **画面内容描述**: 拍摄场景、产品展示方式、人物动作、道具使用。
+                3.  **文字信息识别**: 字幕、屏幕文字、品牌标识。
+                4.  **音频内容分析**: 口播内容、背景音乐风格、音效使用。
+                5.  **产品信息识别**: 香水品牌、瓶身设计特征。
+
+                ## 第二步：7维度专业评估 (每个维度100分)
+                请为以下7个维度逐一评分，并给出详细的评分依据。
+
+                ### 1. 吸引力维度 (前3秒)
+                - **评分标准**: 情绪冲击力(40分)、视觉张力(35分)、卖点切入(25分)。
+                - **特别关注**: 是否瞬间抓住用户注意力。
+
+                ### 2. 内容创意维度
+                - **评分标准**: 共鸣感建立(40分)、创意与产品融合度(35分)、场景代入感(25分)。
+                - **西班牙市场要求**: 是否贴近当地女性生活方式和情感表达习惯。
+
+                ### 3. 主题聚焦维度
+                - **评分标准**: 卖点明确度(45分)、场景契合度(35分)、用户匹配度(20分)。
+                - **特别关注**: 核心价值表达是否清晰，避免卖点过多。
+
+                ### 4. 节奏控制维度
+                - **评分标准**: 切换顺畅度(40分)、高潮设置(35分)、音画同步度(25分)。
+                - **香水特色**: 喷洒动作的慢镜头、瓶身特写、香味扩散的视觉化表达。
+
+                ### 5. 文案引导力维度
+                - **评分标准**: 钩子文案效果(45分)、卖点导入逻辑(35分)、互动引导自然度(20分)。
+                - **特别关注**: 避免模板化表达，创造独特自然的表达。
+
+                ### 6. 画面美感维度
+                - **评分标准**: 技术质量(40分)、美学风格(35分)、产品展示质量(25分)。
+                - **无人脸拍摄评估**: 手部动作、身体局部展示、环境氛围营造。
+
+                ### 7. 声音配乐维度
+                - **评分标准**: 口播质量(45分)、配乐契合度(35分)、整体协调性(20分)。
+                - **特别关注**: BGM与香水调性、西班牙文化的匹配。
+
+                ## 第三步：问题诊断
+                - 列出得分低于80分的维度，分析具体问题点。
+                - 评估改进的紧急程度和难易度。
+
+                **输入文件**:
+                - **视频**: {{#start-node.video_file#}}
+                - **提取的文字**: {{#doc-extractor-node.text#}}
+      - id: aggregator-node
+        data:
+          title: "结果聚合"
+          type: variable-aggregator
+          desc: "聚合分析结果，为后续文案生成准备数据"
+          variables:
+            - variable_name: analysis_result
+              variable_selector:
+                - analysis-llm-node
+                - text
+            - variable_name: video_file
+              variable_selector:
+                - start-node
+                - video_file
+      - id: copywriting-llm-node
+        data:
+          title: "文案生成与建议"
+          type: llm
+          desc: "基于分析结果生成西班牙市场本地化文案和优化建议"
+          model:
+            provider: openai
+            name: gpt-4o
+            mode: chat
+            completion_params:
+              temperature: 0.7
+          vision:
+            enabled: false
+          prompt_template:
+            - role: system
+              text: "你是香水短视频文案创作和优化建议专家，擅长西班牙市场本地化和TikTok内容策略。你的建议必须具体可操作，西班牙语语法必须正确且自然。"
+            - role: user
+              text: |
+                # 任务：优化方案与文案创作
+                基于前面的视频分析结果，请完成以下任务：
+
+                ## 任务1：优化建议生成
+                提供具体可执行的优化建议，分为三类：
+                1.  **即时优化 (无需重拍)**: 针对评分60-79分的问题，提供调整方法和预期效果。
+                2.  **重拍建议 (需要重制)**: 针对评分60分以下的严重问题，提供核心问题分析和重拍要点。
+                3.  **策略升级 (长期改进)**: 提供内容策略、拍摄技巧、市场趋势对接的建议。
+
+                ## 任务2：西班牙市场文案创作 (3条)
+                为西班牙TikTok市场创作3条本地化文案。
+                - **目标用户**: 18-35岁西班牙女性，注重品质但价格敏感，重视家庭和社交。
+                - **语言风格**: 情感直接热情，口语化，适度融入流行语。
+                - **文案类型**: 情感共鸣型、产品功能型、互动引导型。
+                - **创作格式**:
+                  ### 文案[编号]: [类型]
+                  **西班牙语版本**: [完整翻译+本地化调整]
+                  **中文版本**: [50-80字，重点说明]
+                  **应用场景**: [具体使用时机和场合]
+
+                **分析结果数据**: {{#aggregator-node.analysis_result#}}
+      - id: template-node
+        data:
+          title: "报告格式化"
+          type: template
+          desc: "格式化最终的分析报告输出"
+          template: |
+            # 🌹 香水短视频专业分析报告
+
+            ## 🎯 **7维度专业评估结果**
+            {{#aggregator-node.analysis_result#}}
+
+            ---
+
+            ## 🎨 **西班牙市场本地化方案**
+            {{#copywriting-llm-node.text#}}
+
+            ---
+
+            ## 📝 **总结**
+            本报告基于专业的7维度评估体系，为香水类短视频在西班牙TikTok市场的优化提供科学指导。请优先处理评分较低的维度，并根据优化建议调整内容。
+
+            *📞 如需进一步咨询，请联系我们的专家团队。*
+      - id: end-node
+        data:
+          title: "结束"
+          type: end
+          desc: "输出完整的分析报告"
+          outputs:
+            - variable: analysis_report
+              value_selector:
+                - template-node
+                - output
+    edges:
+      - id: edge-start-to-extractor
+        source: start-node
+        target: doc-extractor-node
+      - id: edge-extractor-to-analysis
+        source: doc-extractor-node
+        target: analysis-llm-node
+      - id: edge-analysis-to-aggregator
+        source: analysis-llm-node
+        target: aggregator-node
+      - id: edge-aggregator-to-copywriting
+        source: aggregator-node
+        target: copywriting-llm-node
+      - id: edge-copywriting-to-template
+        source: copywriting-llm-node
+        target: template-node
+      - id: edge-template-to-end
+        source: template-node
+        target: end-node 

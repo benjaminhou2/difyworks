@@ -19,18 +19,11 @@
 
 ### 1. 节点类型兼容性校验
 
-#### ❌ 常见错误
-```yaml
-# 错误：使用不存在的节点类型
-type: variable-aggregator  # 此节点类型不被Dify官方支持
-type: data-processor      # 此节点类型不被Dify官方支持
-type: custom-logic        # 此节点类型不被Dify官方支持
-```
-
 #### ✅ 正确标准
-**Dify官方支持的节点类型（完整清单）**：
+**Dify官方支持的节点类型（2025年1月更新）**：
 - `start` - 开始节点
 - `end` - 结束节点  
+- `answer` - 直接回复节点
 - `llm` - LLM节点
 - `if-else` - 条件判断节点
 - `code` - 代码节点
@@ -41,11 +34,17 @@ type: custom-logic        # 此节点类型不被Dify官方支持
 - `question-classifier` - 问题分类节点
 - `iteration` - 迭代节点
 - `parameter-extractor` - 参数提取节点
+- `variable-aggregator` - 变量聚合器节点 ✅ **官方确认支持**
+- `variable-assigner` - 变量赋值节点
+- `doc-extractor` - 文档提取器节点
+- `list-operator` - 列表操作节点
+- `agent` - Agent节点
+- `loop` - 循环节点
 
 #### 🔧 校验方法
 ```bash
 # 检查是否使用了不支持的节点类型
-grep -n "type:" your_workflow.yml | grep -v -E "(start|end|llm|if-else|code|template|http-request|tool|knowledge-retrieval|question-classifier|iteration|parameter-extractor)"
+grep -n "type:" your_workflow.yml | grep -v -E "(start|end|answer|llm|if-else|code|template|http-request|tool|knowledge-retrieval|question-classifier|iteration|parameter-extractor|variable-aggregator|variable-assigner|doc-extractor|list-operator|agent|loop)"
 ```
 
 #### 📝 校验清单
@@ -58,13 +57,6 @@ grep -n "type:" your_workflow.yml | grep -v -E "(start|end|llm|if-else|code|temp
 ### 2. 文件上传配置校验
 
 #### ❌ 常见错误
-```yaml
-# 错误：使用不兼容的文件类型定义
-variables:
-- type: files          # 在某些版本可能不兼容
-- type: file_upload    # 错误的类型名称
-- type: media          # 错误的类型名称
-```
 
 #### ✅ 正确标准
 ```yaml
@@ -145,12 +137,8 @@ grep -A 2 "vision:" your_workflow.yml
 
 ### 4. 条件分支处理校验
 
-#### ❌ 常见错误
-```yaml
-# 错误：添加不支持的聚合节点
-- type: variable-aggregator    # 不存在的节点类型
-- type: data-merger           # 不存在的节点类型
-```
+
+**重要更新**：`variable-aggregator` 是Dify官方支持的节点类型！之前的判断有误。
 
 #### ✅ 正确标准
 ```yaml

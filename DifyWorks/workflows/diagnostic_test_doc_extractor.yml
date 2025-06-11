@@ -1,0 +1,75 @@
+app:
+  description: 诊断 `doc-extractor` 节点在 Dify v0.3.0 中的渲染兼容性。
+  icon: "📄"
+  icon_background: "#E0F2FE"
+  mode: workflow
+  name: Diagnostic Test - Doc Extractor
+kind: app
+version: 0.3.0
+workflow:
+  features:
+    file_upload:
+      image:
+        enabled: true
+  graph:
+    nodes:
+      - id: start-node
+        data:
+          title: "开始 (文件上传)"
+          type: start
+          variables:
+            - variable: file_upload
+              label: "文件"
+              type: file
+              required: true
+        height: 100
+        width: 240
+        position: { x: 50, y: 200 }
+        selected: false
+        sourcePosition: right
+        targetPosition: left
+      - id: doc-extractor-node
+        data:
+          title: "文档提取"
+          type: doc-extractor
+          extract_settings:
+            - extract_type: text
+              source: "{{#start-node.file_upload#}}"
+          vision:
+            enabled: false
+        height: 100
+        width: 240
+        position: { x: 450, y: 200 }
+        selected: false
+        sourcePosition: right
+        targetPosition: left
+      - id: end-node
+        data:
+          title: "结束"
+          type: end
+          outputs:
+            - variable: output_text
+              value_selector:
+                - doc-extractor-node
+                - text
+        height: 100
+        width: 240
+        position: { x: 850, y: 200 }
+        selected: false
+        sourcePosition: right
+        targetPosition: left
+    edges:
+      - id: edge-start-to-extractor
+        source: start-node
+        target: doc-extractor-node
+        zIndex: 0
+        data:
+          sourceType: start
+          targetType: doc-extractor
+      - id: edge-extractor-to-end
+        source: doc-extractor-node
+        target: end-node
+        zIndex: 0
+        data:
+          sourceType: doc-extractor
+          targetType: end 

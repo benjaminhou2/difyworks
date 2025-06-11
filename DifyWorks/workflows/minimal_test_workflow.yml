@@ -1,0 +1,50 @@
+app:
+  description: 一个用于诊断 Dify v0.3.0 渲染问题的最小化测试工作流。
+  icon: "🔬"
+  icon_background: "#F3F4F6"
+  mode: workflow
+  name: Minimal Diagnostic Workflow
+kind: app
+version: 0.3.0
+workflow:
+  features: {}
+  graph:
+    nodes:
+      - id: start-node
+        data:
+          title: "开始"
+          type: start
+          variables:
+            - variable: input_text
+              label: "输入"
+              type: string
+              required: true
+        height: 100
+        width: 240
+        position: { x: 50, y: 200 }
+        selected: false
+        sourcePosition: right
+        targetPosition: left
+      - id: end-node
+        data:
+          title: "结束"
+          type: end
+          outputs:
+            - variable: output_text
+              value_selector:
+                - start-node
+                - input_text
+        height: 100
+        width: 240
+        position: { x: 450, y: 200 }
+        selected: false
+        sourcePosition: right
+        targetPosition: left
+    edges:
+      - id: edge-start-to-end
+        source: start-node
+        target: end-node
+        zIndex: 0
+        data:
+          sourceType: start
+          targetType: end 
