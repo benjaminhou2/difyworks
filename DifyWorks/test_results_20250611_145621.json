@@ -1,0 +1,38 @@
+{
+  "start_time": "2025-06-11T14:54:30.950616",
+  "workflow_file": "E:\\tools\\DifyWorks\\workflows\\香水短视频分析工作流_官方语法修复版.yml",
+  "success": false,
+  "errors": [
+    {
+      "type": "JavaScript Error",
+      "level": "WARNING",
+      "message": "https://dify.xiaooutech.com/apps - Blocked aria-hidden on an element because its descendant retained focus. The focus must not be hidden from assistive technology users. Avoid using aria-hidden on a focused element or its ancestor. Consider using the inert attribute instead, which will also prevent focus. For more details, see the aria-hidden section of the WAI-ARIA specification at https://w3c.github.io/aria/#aria-hidden.\nElement with focus: <button.btn disabled:btn-disabled btn-primary btn-medium gap-1>\nAncestor with aria-hidden: <div>",
+      "timestamp": 1749624965624,
+      "source": "rendering"
+    },
+    {
+      "type": "JavaScript Error",
+      "level": "SEVERE",
+      "message": "https://dify.xiaooutech.com/_next/static/chunks/3374-688e9970e8eca026.js 0:857653 Uncaught TypeError: e.slice is not a function",
+      "timestamp": 1749624971784,
+      "source": "javascript"
+    },
+    {
+      "type": "JavaScript Error",
+      "level": "SEVERE",
+      "message": "https://dify.xiaooutech.com/_next/static/chunks/3374-688e9970e8eca026.js 0:857653 Uncaught TypeError: e.slice is not a function",
+      "timestamp": 1749624981774,
+      "source": "javascript"
+    }
+  ],
+  "warnings": [],
+  "performance": {
+    "page_load_time": 4.9038872718811035
+  },
+  "workflow_info": {
+    "title": "香水短视频分析工作流",
+    "found_timestamp": "2025-06-11T14:56:16.735423"
+  },
+  "end_time": "2025-06-11T14:56:21.973918",
+  "duration_seconds": 111.023302
+}

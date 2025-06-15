@@ -1,0 +1,1039 @@
+app:
+  description: "专业的香水类短视频内容分析与优化工作流，面向西班牙TikTok市场，提供从内容识别到策略优化的全链路分析服务"
+  icon: "🌹"
+  mode: workflow
+  name: "香水短视频分析工作流"
+
+dependencies: []
+
+kind: app
+version: 0.3.0
+
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      image:
+        enabled: false
+      video:
+        enabled: true
+        number_limits: 1
+        transfer_methods:
+        - local_file
+    opening_statement: ""
+    retriever_resource:
+      enabled: false
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        sourceType: start
+        targetType: document-extractor
+      id: 1736412001000-1736412002000
+      source: '1736412001000'
+      sourceHandle: source
+      target: '1736412002000'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: document-extractor
+        targetType: llm
+      id: 1736412002000-1736412003000
+      source: '1736412002000'
+      sourceHandle: source
+      target: '1736412003000'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: llm
+        targetType: llm
+      id: 1736412003000-1736412004000
+      source: '1736412003000'
+      sourceHandle: source
+      target: '1736412004000'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: llm
+        targetType: llm
+      id: 1736412004000-1736412005000
+      source: '1736412004000'
+      sourceHandle: source
+      target: '1736412005000'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: llm
+        targetType: llm
+      id: 1736412005000-1736412006000
+      source: '1736412005000'
+      sourceHandle: source
+      target: '1736412006000'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: llm
+        targetType: llm
+      id: 1736412006000-1736412007000
+      source: '1736412006000'
+      sourceHandle: source
+      target: '1736412007000'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: llm
+        targetType: variable-aggregator
+      id: 1736412007000-1736412008000
+      source: '1736412007000'
+      sourceHandle: source
+      target: '1736412008000'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: variable-aggregator
+        targetType: llm
+      id: 1736412008000-1736412009000
+      source: '1736412008000'
+      sourceHandle: source
+      target: '1736412009000'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: llm
+        targetType: llm
+      id: 1736412009000-1736412010000
+      source: '1736412009000'
+      sourceHandle: source
+      target: '1736412010000'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: llm
+        targetType: end
+      id: 1736412010000-1736412011000
+      source: '1736412010000'
+      sourceHandle: source
+      target: '1736412011000'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        desc: 工作流开始，接收香水短视频文件输入
+        selected: false
+        title: 开始
+        type: start
+        variables:
+        - label: 香水短视频文件
+          max_length: null
+          options: []
+          required: true
+          type: file
+          variable: video_file
+      height: 89
+      id: '1736412001000'
+      position:
+        x: 80
+        y: 282
+      positionAbsolute:
+        x: 80
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: 提取视频中的文字信息、音频内容和视觉元素
+        extraction_mode: automatic
+        selected: false
+        title: 视频内容提取
+        type: document-extractor
+        variables: []
+        variable_selector:
+        - '1736412001000'
+        - video_file
+      height: 89
+      id: '1736412002000'
+      position:
+        x: 384
+        y: 282
+      positionAbsolute:
+        x: 384
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: 进行基础信息识别和多维度内容解析
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: gpt-4o
+          provider: openai
+        prompt_template:
+        - role: system
+          text: |
+            你是"短视频精灵 (Perfume Video Wizard)"，专业的香水类短视频内容分析师。
+
+            ## 📋 任务目标
+            对香水短视频进行全面的内容识别和初步分析，提取关键信息为后续专业评估做准备。
+
+            ## 🔍 分析要求
+            
+            ### 1. 视频基础信息识别
+            - 视频时长、分辨率、格式
+            - 整体画面风格和色调
+            - 拍摄环境和场景设置
+            
+            ### 2. 产品信息提取
+            - 香水品牌和产品名称
+            - 瓶身设计和包装特征
+            - 产品展示角度和方式
+            - 香调类型推断（花香/果香/木质香等）
+            
+            ### 3. 内容元素分析
+            - 文字信息（字幕、标识、文案）
+            - 人物出镜情况和表现方式
+            - 道具布置和环境氛围
+            - 音频内容概述
+            
+            ### 4. 创意表现形式
+            - 视频开场方式
+            - 产品展示手法
+            - 情感表达技巧
+            - 互动引导设计
+            
+            ## 📤 输出格式
+            请按以下结构化格式输出分析结果：
+            
+            ```
+            # 香水短视频内容识别报告
+            
+            ## 📊 基础信息
+            - **视频时长**: [X秒]
+            - **画面质量**: [分辨率/清晰度评价]
+            - **整体风格**: [简约/奢华/清新/成熟等]
+            
+            ## 🌹 产品信息
+            - **品牌识别**: [品牌名称或"未明确显示"]
+            - **产品特征**: [瓶身设计、颜色、尺寸等]
+            - **香调推断**: [基于视觉元素推测的香调类型]
+            - **展示方式**: [静态展示/动态喷洒/使用演示等]
+            
+            ## 🎬 内容元素
+            - **文字信息**: [提取的所有文字内容]
+            - **出镜情况**: [人物出镜部位和表现]
+            - **场景布置**: [拍摄环境描述]
+            - **音频概述**: [背景音乐类型、是否有口播等]
+            
+            ## 🎨 创意表现
+            - **开场设计**: [前3秒的吸引点]
+            - **产品展示**: [展示手法和创意点]
+            - **情感传达**: [传达的情绪和氛围]
+            - **互动元素**: [是否有引导用户互动的设计]
+            ```
+
+            基于提取的视频内容：{{#1736412002000.text#}}
+
+            请进行全面的内容识别分析。
+        selected: false
+        title: 基础信息分析
+        type: llm
+        vision:
+          enabled: true
+        variables: []
+      height: 89
+      id: '1736412003000'
+      position:
+        x: 688
+        y: 282
+      positionAbsolute:
+        x: 688
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: 对吸引力、创意、主题聚焦、节奏控制四个核心维度进行专业评估
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: gpt-4o
+          provider: openai
+        prompt_template:
+        - role: system
+          text: |
+            ## 📊 核心维度评估（第一组）
+
+            基于内容识别结果：{{#1736412003000.text#}}
+
+            请对以下4个维度进行专业评估，每个维度满分100分：
+
+            ### 1. 🎯 吸引力指数 (0-100分)
+
+            **评估细则:**
+            - 90-100分: 多重吸引元素完美融合，瞬间抓住注意力
+            - 80-89分: 有明显亮点，能有效吸引用户停留
+            - 70-79分: 有吸引元素但不够突出
+            - 60-69分: 吸引力一般，需要优化
+            - 60分以下: 缺乏有效吸引点
+
+            **评估指标:**
+            - 情绪冲击力 (40%权重): 前3秒的情绪建立
+            - 视觉张力 (35%权重): 色彩搭配、构图美感、动作设计
+            - 卖点切入速度 (25%权重): 产品出现时机和价值传达
+
+            ### 2. 🎨 内容创意指数 (0-100分)
+
+            **评估细则:**
+            - 90-100分: 创意独特，与产品完美融合，具有传播潜力
+            - 80-89分: 有创意亮点，整体表现良好
+            - 70-79分: 创意一般，缺乏记忆点
+            - 60-69分: 创意平庸，需要重新构思
+            - 60分以下: 缺乏创意，内容乏味
+
+            **评估指标:**
+            - 共鸣感建立 (40%权重): 与西班牙女性用户的情感连接
+            - 创意与产品融合度 (35%权重): 创意是否自然展现产品特点
+            - 使用场景代入感 (25%权重): 场景真实性和代入感
+
+            ### 3. 🎯 主题聚焦度 (0-100分)
+
+            **评估细则:**
+            - 90-100分: 主题明确，卖点突出，用户理解成本低
+            - 80-89分: 主题清晰，有少量干扰信息
+            - 70-79分: 主题基本清晰，但不够聚焦
+            - 60-69分: 主题模糊，重点不突出
+            - 60分以下: 主题混乱，用户难以理解
+
+            **评估指标:**
+            - 卖点明确度 (45%权重): 香水核心价值是否清晰传达
+            - 场景契合度 (35%权重): 使用场景是否与目标用户匹配
+            - 目标用户匹配度 (20%权重): 是否符合西班牙18-35岁女性偏好
+
+            ### 4. ⏰ 节奏控制力 (0-100分)
+
+            **评估细则:**
+            - 90-100分: 节奏完美，有明显层次和高潮点
+            - 80-89分: 节奏良好，过渡自然
+            - 70-79分: 节奏一般，有优化空间
+            - 60-69分: 节奏问题明显，影响观看体验
+            - 60分以下: 节奏混乱，用户难以跟上
+
+            **评估指标:**
+            - 切换顺畅度 (40%权重): 镜头转换频率和自然度
+            - 高潮设置 (35%权重): 情绪高潮点的设计和时机
+            - 音画同步度 (25%权重): BGM与画面的配合度
+
+            ## 📤 输出格式
+
+            ```
+            # 核心维度评估报告（第一组）
+
+            ## 📊 评分结果
+            1. **吸引力指数**: [X]/100分
+            2. **内容创意指数**: [X]/100分  
+            3. **主题聚焦度**: [X]/100分
+            4. **节奏控制力**: [X]/100分
+
+            ## 🔍 详细分析
+
+            ### 1. 吸引力指数 ([X]/100分)
+            - **情绪冲击力**: [具体分析]
+            - **视觉张力**: [具体分析]
+            - **卖点切入速度**: [具体分析]
+            - **总体评价**: [综合评价]
+
+            ### 2. 内容创意指数 ([X]/100分)
+            - **共鸣感建立**: [具体分析]
+            - **创意与产品融合度**: [具体分析]
+            - **使用场景代入感**: [具体分析]
+            - **总体评价**: [综合评价]
+
+            ### 3. 主题聚焦度 ([X]/100分)
+            - **卖点明确度**: [具体分析]
+            - **场景契合度**: [具体分析]
+            - **目标用户匹配度**: [具体分析]
+            - **总体评价**: [综合评价]
+
+            ### 4. 节奏控制力 ([X]/100分)
+            - **切换顺畅度**: [具体分析]
+            - **高潮设置**: [具体分析]
+            - **音画同步度**: [具体分析]
+            - **总体评价**: [综合评价]
+
+            ## ⚠️ 主要问题诊断
+            [列出发现的主要问题和改进建议]
+            ```
+
+            请基于内容识别结果进行客观专业的评估。
+        selected: false
+        title: 核心维度评估（第一组）
+        type: llm
+        vision:
+          enabled: true
+        variables: []
+      height: 89
+      id: '1736412004000'
+      position:
+        x: 992
+        y: 282
+      positionAbsolute:
+        x: 992
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: 对文案引导力、画面美感、声音配乐三个维度进行专业评估
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: gpt-4o
+          provider: openai
+        prompt_template:
+        - role: system
+          text: |
+            ## 📊 补充维度评估（第二组）
+
+            基于内容识别结果：{{#1736412003000.text#}}
+
+            请对以下3个维度进行专业评估，每个维度满分100分：
+
+            ### 5. 📝 文案引导力 (0-100分)
+
+            **评估细则:**
+            - 90-100分: 文案引导性强，自然引发互动
+            - 80-89分: 文案有吸引力，引导明确
+            - 70-79分: 文案普通，引导效果一般
+            - 60-69分: 文案生硬，缺乏吸引力
+            - 60分以下: 文案无效，无引导作用
+
+            **评估指标:**
+            - 钩子文案效果 (45%权重): 开场文案的吸引力和独特性
+            - 卖点导入逻辑 (35%权重): 从钩子到产品的逻辑连贯性
+            - 互动引导自然度 (20%权重): 引导用户互动的自然程度
+
+            ### 6. 🎨 画面美感度 (0-100分)
+
+            **评估细则:**
+            - 90-100分: 画面精美，质感突出，符合品牌调性
+            - 80-89分: 画面美观，有一定质感
+            - 70-79分: 画面一般，缺乏特色
+            - 60-69分: 画面质量有问题，影响观感
+            - 60分以下: 画面粗糙，严重影响产品形象
+
+            **评估指标:**
+            - 技术质量 (40%权重): 分辨率、稳定性、曝光、色彩
+            - 美学风格 (35%权重): 风格匹配度和审美水平
+            - 产品展示质量 (25%权重): 产品展示的专业性和美感
+
+            ### 7. 🎵 声音配乐度 (0-100分)
+
+            **评估细则:**
+            - 90-100分: 声音清晰，配乐完美契合，增强表现力
+            - 80-89分: 声音质量良好，配乐合适
+            - 70-79分: 声音配乐一般，无明显问题
+            - 60-69分: 声音配乐有缺陷，影响体验
+            - 60分以下: 声音配乐严重问题，影响内容理解
+
+            **评估指标:**
+            - 口播质量 (45%权重): 发音清晰度、语调自然度、情绪表达
+            - 配乐契合度 (35%权重): BGM与产品调性、内容情绪的匹配
+            - 整体协调性 (20%权重): 音画同步效果和音效运用
+
+            ## 📤 输出格式
+
+            ```
+            # 补充维度评估报告（第二组）
+
+            ## 📊 评分结果
+            5. **文案引导力**: [X]/100分
+            6. **画面美感度**: [X]/100分
+            7. **声音配乐度**: [X]/100分
+
+            ## 🔍 详细分析
+
+            ### 5. 文案引导力 ([X]/100分)
+            - **钩子文案效果**: [具体分析]
+            - **卖点导入逻辑**: [具体分析]
+            - **互动引导自然度**: [具体分析]
+            - **总体评价**: [综合评价]
+
+            ### 6. 画面美感度 ([X]/100分)
+            - **技术质量**: [具体分析]
+            - **美学风格**: [具体分析]
+            - **产品展示质量**: [具体分析]
+            - **总体评价**: [综合评价]
+
+            ### 7. 声音配乐度 ([X]/100分)
+            - **口播质量**: [具体分析]
+            - **配乐契合度**: [具体分析]
+            - **整体协调性**: [具体分析]
+            - **总体评价**: [综合评价]
+
+            ## ⚠️ 主要问题诊断
+            [列出发现的主要问题和改进建议]
+            ```
+
+            请基于内容识别结果进行客观专业的评估。
+        selected: false
+        title: 补充维度评估（第二组）
+        type: llm
+        vision:
+          enabled: true
+        variables: []
+      height: 89
+      id: '1736412005000'
+      position:
+        x: 1296
+        y: 282
+      positionAbsolute:
+        x: 1296
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: 基于视频内容特点生成西班牙市场本地化营销文案
+        model:
+          completion_params:
+            temperature: 0.8
+          mode: chat
+          name: gpt-4o
+          provider: openai
+        prompt_template:
+        - role: system
+          text: |
+            ## 🇪🇸 西班牙市场文案生成
+
+            基于视频分析结果：{{#1736412003000.text#}}
+
+            ## 📋 任务要求
+            
+            为这个香水短视频生成3条适用于西班牙TikTok市场的本地化文案，每条文案都要包含中文和西班牙语版本。
+
+            ## 🎯 目标用户画像
+            - **年龄**: 18-35岁西班牙女性
+            - **平台**: TikTok
+            - **文化特点**: 重视家庭和社交关系，喜欢自然美感
+            - **语言偏好**: 情感表达直接热情，使用口语化表达
+
+            ## 📝 文案要求
+
+            ### 文案1: 情感共鸣型
+            - **目标**: 建立情感连接，引发共鸣
+            - **长度**: 中文50-80字，西班牙语相应长度
+            - **特点**: 温暖、亲近、有代入感
+
+            ### 文案2: 产品功能型
+            - **目标**: 突出产品特色和使用效果
+            - **长度**: 中文50-80字，西班牙语相应长度
+            - **特点**: 具体、可信、有说服力
+
+            ### 文案3: 互动引导型
+            - **目标**: 引导用户互动和分享
+            - **长度**: 中文50-80字，西班牙语相应长度
+            - **特点**: 有趣、互动性强、传播性好
+
+            ## 🌍 本地化要点
+            
+            1. **文化适配**: 
+               - 考虑西班牙女性的生活方式
+               - 避免过于商业化的表达
+               - 融入当地社交文化特色
+
+            2. **语言风格**:
+               - 使用自然的口语表达
+               - 适当使用情感化词汇
+               - 避免过于正式的商业用语
+
+            3. **情感表达**:
+               - 体现拉丁文化的热情
+               - 强调个人魅力和自信
+               - 重视社交场合的重要性
+
+            ## 📤 输出格式
+
+            ```
+            # 西班牙市场本地化文案
+
+            ## 文案1: 情感共鸣型
+            **中文版**: [中文文案内容]
+            **西班牙语版**: [完整的西班牙语翻译和本地化调整]
+            **应用场景**: [适合使用的场景说明]
+            **预期效果**: [预期能达到的效果]
+
+            ## 文案2: 产品功能型  
+            **中文版**: [中文文案内容]
+            **西班牙语版**: [完整的西班牙语翻译和本地化调整]
+            **应用场景**: [适合使用的场景说明]
+            **预期效果**: [预期能达到的效果]
+
+            ## 文案3: 互动引导型
+            **中文版**: [中文文案内容]
+            **西班牙语版**: [完整的西班牙语翻译和本地化调整]
+            **应用场景**: [适合使用的场景说明]
+            **预期效果**: [预期能达到的效果]
+
+            ## 💡 使用建议
+            [针对不同平台和时段的使用建议]
+            ```
+
+            请基于视频内容特点生成高质量的本地化文案。
+        selected: false
+        title: 西班牙本地化文案
+        type: llm
+        vision:
+          enabled: false
+        variables: []
+      height: 89
+      id: '1736412006000'
+      position:
+        x: 1600
+        y: 282
+      positionAbsolute:
+        x: 1600
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: 生成具体可执行的优化建议清单
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: gpt-4o
+          provider: openai
+        prompt_template:
+        - role: system
+          text: |
+            ## 🚀 优化建议生成
+
+            基于前面的评估分析：
+            - 基础信息: {{#1736412003000.text#}}
+            - 本地化文案: {{#1736412006000.text#}}
+
+            ## 📋 任务目标
+            
+            基于多维度评估结果，生成具体可执行的优化建议清单，帮助提升视频的传播效果和商业价值。
+
+            ## 🎯 建议分类
+
+            ### 即时优化建议
+            - 可以通过后期编辑立即调整的问题
+            - 不需要重新拍摄的改进方案
+            - 技术性问题的解决方法
+
+            ### 重拍优化建议
+            - 需要重新拍摄才能解决的核心问题
+            - 创意和内容层面的根本性改进
+            - 关键镜头和场景的重新设计
+
+            ### 策略升级建议
+            - 长期的内容策略调整方向
+            - 拍摄技巧和设备的提升建议
+            - 市场趋势对接和竞争力提升
+
+            ## 📤 输出格式
+
+            ```
+            # 优化建议清单
+
+            ## ⚡ 即时优化（可立即调整）
+
+            ### 🔧 技术调整
+            1. **[问题点]**: [具体问题描述]
+               - **调整方法**: [详细的操作步骤]
+               - **预期效果**: [改善后的预期效果]
+               - **优先级**: 高/中/低
+
+            2. **[问题点]**: [具体问题描述]
+               - **调整方法**: [详细的操作步骤]
+               - **预期效果**: [改善后的预期效果]
+               - **优先级**: 高/中/低
+
+            ### 📝 文案优化
+            1. **[问题点]**: [具体问题描述]
+               - **建议文案**: [改进后的文案示例]
+               - **改进理由**: [为什么这样改进]
+               - **优先级**: 高/中/低
+
+            ## 🎬 重拍建议（需重新制作）
+
+            ### 📹 核心镜头重拍
+            1. **[镜头场景]**: [需要重拍的具体镜头]
+               - **问题分析**: [当前问题的详细分析]
+               - **重拍要点**: [重拍时的关键注意事项]
+               - **参考建议**: [可参考的拍摄手法或案例]
+               - **预期提升**: [重拍后能带来的改善]
+
+            ### 🎨 创意重构
+            1. **[创意元素]**: [需要重新设计的创意部分]
+               - **现状问题**: [当前创意的不足之处]
+               - **改进方向**: [具体的改进思路]
+               - **实施建议**: [如何实现这个改进]
+
+            ## 📈 策略升级（长期改进）
+
+            ### 🎯 内容策略
+            1. **[策略方向]**: [具体的策略调整建议]
+               - **市场背景**: [基于市场趋势的分析]
+               - **实施路径**: [如何逐步实现这个策略]
+               - **预期收益**: [长期能带来的价值]
+
+            ### 🛠️ 技能提升
+            1. **[技能领域]**: [需要提升的具体技能]
+               - **当前差距**: [与理想水平的差距分析]
+               - **学习建议**: [具体的学习路径和资源]
+               - **练习方法**: [如何在实践中提升]
+
+            ## 🎯 总体建议
+
+            ### 📊 优先级排序
+            1. **最高优先级**: [最需要立即处理的问题]
+            2. **中等优先级**: [中期需要改进的方面]
+            3. **长期优化**: [持续改进的方向]
+
+            ### 📈 预期改善效果
+            - **短期效果** (1-2周): [立即可见的改善]
+            - **中期效果** (1-2月): [中期能达到的提升]
+            - **长期效果** (3-6月): [长期战略的预期收益]
+            ```
+
+            请基于评估结果提供具体可执行的优化建议。
+        selected: false
+        title: 优化建议生成
+        type: llm
+        vision:
+          enabled: false
+        variables: []
+      height: 89
+      id: '1736412007000'
+      position:
+        x: 1904
+        y: 282
+      positionAbsolute:
+        x: 1904
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        advanced_settings:
+          group_enabled: false
+        assigned_variable_selector: []
+        desc: 聚合所有评估结果为完整分析报告
+        grouping_type: all
+        selected: false
+        title: 结果聚合
+        type: variable-aggregator
+        variables:
+        - value_selector:
+          - '1736412003000'
+          - text
+          variable: basic_analysis
+        - value_selector:
+          - '1736412004000'
+          - text
+          variable: core_dimensions
+        - value_selector:
+          - '1736412005000'
+          - text
+          variable: additional_dimensions
+        - value_selector:
+          - '1736412006000'
+          - text
+          variable: localized_content
+        - value_selector:
+          - '1736412007000'
+          - text
+          variable: optimization_suggestions
+      height: 89
+      id: '1736412008000'
+      position:
+        x: 2208
+        y: 282
+      positionAbsolute:
+        x: 2208
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: 计算总分并生成完整的分析报告
+        model:
+          completion_params:
+            temperature: 0.5
+          mode: chat
+          name: gpt-4o
+          provider: openai
+        prompt_template:
+        - role: system
+          text: |
+            ## 📊 完整分析报告生成
+
+            基于所有评估结果，生成最终的香水短视频分析报告。
+
+            ### 输入数据
+            - **基础分析**: {{#1736412008000.basic_analysis#}}
+            - **核心维度评估**: {{#1736412008000.core_dimensions#}}
+            - **补充维度评估**: {{#1736412008000.additional_dimensions#}}
+            - **本地化文案**: {{#1736412008000.localized_content#}}
+            - **优化建议**: {{#1736412008000.optimization_suggestions#}}
+
+            ## 📋 任务要求
+
+            1. **提取所有维度的分数**，计算总分（满分700分）
+            2. **生成等级评价**（S/A/B/C/D级）
+            3. **汇总关键问题**和优化重点
+            4. **整合所有分析结果**为一份完整报告
+
+            ## 📊 评分等级标准
+            - **S级** (630-700分): 优秀作品，具备爆款潜力
+            - **A级** (560-629分): 良好作品，有明显亮点
+            - **B级** (490-559分): 中等水平，需要优化
+            - **C级** (420-489分): 水平一般，需要较大改进
+            - **D级** (0-419分): 问题较多，建议重新制作
+
+            ## 📤 输出格式
+
+            ```
+            # 🌹 香水短视频专业分析报告
+
+            ## 📊 总体评价
+
+            ### 🎯 综合评分
+            **总分**: [X]/700分 | **等级**: [S/A/B/C/D]级
+
+            ### 📈 各维度得分
+            1. **吸引力指数**: [X]/100分
+            2. **内容创意指数**: [X]/100分
+            3. **主题聚焦度**: [X]/100分
+            4. **节奏控制力**: [X]/100分
+            5. **文案引导力**: [X]/100分
+            6. **画面美感度**: [X]/100分
+            7. **声音配乐度**: [X]/100分
+
+            ### 🏆 优势亮点
+            - [列出3-5个最突出的优势]
+
+            ### ⚠️ 关键问题
+            - [列出3-5个最需要改进的问题]
+
+            ## 🇪🇸 西班牙市场适配建议
+
+            [从本地化文案中提取关键信息]
+
+            ## 🚀 优化行动计划
+
+            ### ⚡ 立即行动（1-2天）
+            [从优化建议中提取最高优先级项目]
+
+            ### 📈 短期改进（1-2周）
+            [从优化建议中提取中等优先级项目]
+
+            ### 🎯 长期战略（1-3月）
+            [从优化建议中提取长期改进方向]
+
+            ## 📝 专业建议
+
+            ### 🎬 拍摄技巧提升
+            [基于画面和技术问题的建议]
+
+            ### 📱 平台适配优化
+            [针对TikTok平台的特定建议]
+
+            ### 🌍 市场竞争力分析
+            [基于西班牙市场的竞争分析]
+
+            ## 📈 预期效果
+
+            ### 优化前预估表现
+            - **播放完成率**: [基于节奏控制力预估]
+            - **互动率**: [基于文案引导力预估]
+            - **转化潜力**: [基于整体质量预估]
+
+            ### 优化后预期提升
+            - **播放完成率提升**: [预估提升幅度]
+            - **互动率提升**: [预估提升幅度]
+            - **转化潜力提升**: [预估提升幅度]
+
+            ---
+
+            **分析师**: 短视频精灵 (Perfume Video Wizard)  
+            **分析时间**: [当前时间]  
+            **适用平台**: TikTok (西班牙市场)  
+            **有效期**: 建议3个月内参考使用
+            ```
+
+            请生成完整、专业、实用的分析报告。
+        selected: false
+        title: 报告汇总生成
+        type: llm
+        vision:
+          enabled: false
+        variables: []
+      height: 89
+      id: '1736412009000'
+      position:
+        x: 2512
+        y: 282
+      positionAbsolute:
+        x: 2512
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: 格式化最终输出报告
+        model:
+          completion_params:
+            temperature: 0.3
+          mode: chat
+          name: gpt-4o
+          provider: openai
+        prompt_template:
+        - role: system
+          text: |
+            ## 📋 最终报告格式化
+
+            请将分析报告进行最终格式化处理，确保：
+
+            1. **结构清晰**: 使用合适的标题层级和分隔符
+            2. **数据准确**: 核实所有分数和评级的准确性
+            3. **建议实用**: 确保所有建议都具体可执行
+            4. **语言专业**: 使用专业但易懂的表达方式
+
+            ### 输入内容
+            {{#1736412009000.text#}}
+
+            ### 格式化要求
+            - 保持markdown格式的完整性
+            - 确保emoji使用恰当和一致
+            - 优化段落结构和可读性
+            - 突出关键信息和重要数据
+
+            请输出格式化后的最终分析报告。
+        selected: false
+        title: 格式化输出
+        type: llm
+        vision:
+          enabled: false
+        variables: []
+      height: 89
+      id: '1736412010000'
+      position:
+        x: 2816
+        y: 282
+      positionAbsolute:
+        x: 2816
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: 输出完整的香水短视频分析报告
+        outputs:
+        - value_selector:
+          - '1736412010000'
+          - text
+          variable: analysis_report
+        selected: false
+        title: 分析完成
+        type: end
+        variables: []      # <--- 在这里添加这一行
+      height: 89
+      id: '1736412011000'
+      position:
+        x: 3120
+        y: 282
+      positionAbsolute:
+        x: 3120
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+  variables:
+  - description: 请上传需要分析的香水短视频文件
+    label: 香水短视频文件
+    max_length: null
+    name: video_file
+    options: []
+    required: true
+    type: file
+    variable: video_file 

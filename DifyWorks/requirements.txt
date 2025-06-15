@@ -25,4 +25,8 @@ black>=23.7.0
 flake8>=6.0.0
 
 # 类型检查
-mypy>=1.5.0 
+mypy>=1.5.0
+
+# 浏览器自动化
+selenium>=4.15.0
+webdriver-manager>=4.0.0 
