@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DifyWorks/README.md",
+                "file": "DifyWorks/docs/difytypes.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "README"
+              "title": "difytypes"
             }
           }
         ]
@@ -160,21 +160,21 @@
   },
   "left-ribbon": {
     "hiddenItems": {
+      "obsidian-git:Open Git source control": false,
+      "obsidian-excalidraw-plugin:新建绘图文件": false,
       "switcher:打开快速切换": false,
       "graph:查看关系图谱": false,
       "canvas:新建白板": false,
       "daily-notes:打开/创建今天的日记": false,
       "templates:插入模板": false,
-      "command-palette:打开命令面板": false,
-      "obsidian-git:Open Git source control": false,
-      "obsidian-excalidraw-plugin:新建绘图文件": false
+      "command-palette:打开命令面板": false
     }
   },
   "active": "1162ed9a34564528",
   "lastOpenFiles": [
+    "DifyWorks/README.md",
     "DifyWorks/prompts/coding/code_review.md",
     "DifyWorks/prompts/coding/github.md",
-    "DifyWorks/README.md",
     "DifyWorks/COMPLETION_SUMMARY.md",
     "DifyWorks/DIFY_SETUP.md",
     "DifyWorks/test_guide.md",
